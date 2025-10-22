@@ -11,6 +11,7 @@
     <groupId>com.tpi.backend</groupId>
     <artifactId>TP-Contenedores-Backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>TP-Contenedores-Backend</name>
     <description>TP-Contenedores-Backend</description>
     <url/>
@@ -20,6 +21,9 @@
     <developers>
         <developer/>
     </developers>
+    <modules>
+        <module>common-data</module>
+    </modules>
     <scm>
         <connection/>
         <developerConnection/>
