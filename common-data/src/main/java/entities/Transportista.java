@@ -1,4 +1,4 @@
-package com.tpi.backend.msflota.model;
+package entities;
 
 import jakarta.persistence.*;
 import lombok.*;
