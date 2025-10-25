@@ -1,6 +1,6 @@
 package com.tpi.backend.msflota.repository;
 
-import com.tpi.backend.msflota.model.Transportista;
+import entities.Transportista;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
