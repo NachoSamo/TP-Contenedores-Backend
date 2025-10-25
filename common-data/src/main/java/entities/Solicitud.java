@@ -3,6 +3,7 @@ package entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "solicitudes")
@@ -43,4 +44,8 @@ public class Solicitud {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estado", nullable = false) // FK (int)
     private Estado estado;
+
+    // Relación "genera": Una Solicitud puede tener muchas Rutas
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ruta> rutas;
 }
