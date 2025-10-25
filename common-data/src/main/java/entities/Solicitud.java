@@ -18,13 +18,13 @@ public class Solicitud {
     private Float costoEstimado; // Tipo "float" en el DER
 
     @Column(name = "tiempo_estimado")
-    private Float tiempoEstimado; // Tipo "float" en el DER
+    private Integer tiempoEstimado; // Tipo "int" en el DER
 
     @Column(name = "costo_real")
     private Float costoReal; // Tipo "float" en el DER
 
     @Column(name = "tiempo_real")
-    private Float tiempoReal; // Tipo "float" en el DER
+    private Integer tiempoReal; // Tipo "int" en el DER
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion; // Tipo "DateTime" en el DER
