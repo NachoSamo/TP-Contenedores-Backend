@@ -27,8 +27,9 @@ public class Solicitud {
     @Column(name = "tiempo_real")
     private Integer tiempoReal; // Tipo "int" en el DER
 
-    @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion; // Tipo "DateTime" en el DER
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    @org.hibernate.annotations.CreationTimestamp // hace que Hibernate ponga la fecha/hora antes del INSERT
+    private LocalDateTime fechaCreacion;
 
     // Relación "realiza" (inversa): Muchas Solicitudes son de un Cliente
     @ManyToOne(fetch = FetchType.LAZY)
