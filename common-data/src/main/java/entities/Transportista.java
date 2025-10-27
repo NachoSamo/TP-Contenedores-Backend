@@ -1,13 +1,14 @@
-package com.tpi.backend.msflota.model;
+package entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 /**
- * Entidad que representa a un transportista o chofer responsable de uno o varios camiones.
+ * Representa al transportista o chofer responsable de uno o varios camiones.
  */
 @Entity
-@Table(name = "transportista")
+@Table(name = "transportistas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +17,8 @@ public class Transportista {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_transportista")
+    private Integer idTransportista; // PK (int)
 
     @Column(nullable = false)
     private String nombre;
@@ -33,7 +35,10 @@ public class Transportista {
     @Column(nullable = false)
     private String licencia;
 
-    // Estado actual del transportista (disponible, en ruta, inactivo)
     @Column(nullable = false)
-    private String estado;
+    private String estado; // Ej: "disponible", "en_ruta", "inactivo"
+
+    // 🔹 Relación: un transportista puede tener varios camiones
+    @OneToMany(mappedBy = "transportista", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Camion> camiones;
 }
