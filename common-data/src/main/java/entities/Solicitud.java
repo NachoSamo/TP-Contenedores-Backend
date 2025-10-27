@@ -3,6 +3,7 @@ package entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "solicitudes")
@@ -18,13 +19,13 @@ public class Solicitud {
     private Float costoEstimado; // Tipo "float" en el DER
 
     @Column(name = "tiempo_estimado")
-    private Float tiempoEstimado; // Tipo "float" en el DER
+    private Integer tiempoEstimado; // Tipo "int" en el DER
 
     @Column(name = "costo_real")
     private Float costoReal; // Tipo "float" en el DER
 
     @Column(name = "tiempo_real")
-    private Float tiempoReal; // Tipo "float" en el DER
+    private Integer tiempoReal; // Tipo "int" en el DER
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion; // Tipo "DateTime" en el DER
@@ -43,4 +44,8 @@ public class Solicitud {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estado", nullable = false) // FK (int)
     private Estado estado;
+
+    // Relación "genera": Una Solicitud puede tener muchas Rutas
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ruta> rutas;
 }

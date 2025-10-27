@@ -1,9 +1,9 @@
 package com.tpi.backend.msrutas.repository;
 
-import com.tpi.backend.entities.Tramo;
+import entities.Ruta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TramoRepository extends JpaRepository<Tramo, Long> {
+public interface RutaRepository extends JpaRepository<Ruta, Long> {
 }

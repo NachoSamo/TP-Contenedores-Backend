@@ -1,6 +1,6 @@
 package com.tpi.backend.msflota.repository;
 
-import com.tpi.backend.msflota.model.Tarifa;
+import entities.Tarifa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

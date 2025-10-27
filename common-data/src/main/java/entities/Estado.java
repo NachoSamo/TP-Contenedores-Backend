@@ -14,8 +14,9 @@ public class Estado {
     @Column(name = "id_estado")
     private Integer idEstado; // PK (int), autogenerada
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String contexto; // Columna "contexto" del DER
+    private Contexto contexto;
 
     @Column
     private String descripcion; // Columna "descripcion" del DER

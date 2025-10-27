@@ -1,8 +1,8 @@
 package com.tpi.backend.msflota.service;
 
-import com.tpi.backend.msflota.model.Camion;
-import com.tpi.backend.msflota.model.Tarifa;
-import com.tpi.backend.msflota.model.Transportista;
+import entities.Camion;
+import entities.Tarifa;
+import entities.Transportista;
 import com.tpi.backend.msflota.repository.CamionRepository;
 import com.tpi.backend.msflota.repository.TarifaRepository;
 import com.tpi.backend.msflota.repository.TransportistaRepository;

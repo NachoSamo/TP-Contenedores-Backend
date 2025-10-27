@@ -1,8 +1,8 @@
 package com.tpi.backend.msflota.controller;
 
-import com.tpi.backend.msflota.model.Camion;
-import com.tpi.backend.msflota.model.Tarifa;
-import com.tpi.backend.msflota.model.Transportista;
+import entities.Camion;
+import entities.Tarifa;
+import entities.Transportista;
 import com.tpi.backend.msflota.service.FlotaService;
 import org.springframework.web.bind.annotation.*;
 
