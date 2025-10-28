@@ -33,7 +33,7 @@ public class Solicitud {
 
     // Relación "realiza" (inversa): Muchas Solicitudes son de un Cliente
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_cliente", nullable = false) // FK (int)
+    @JoinColumn(name = "dni_cliente", nullable = false) // FK (int)
     private Cliente cliente;
 
     // Relación "asociado_a" (inversa): Muchas Solicitudes para un Contenedor

@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  # 🐘 Base de datos
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: tp_contenedores
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - tp-network
+
+  # 🚚 Microservicio Flota
+  ms-flota:
+    build: ./ms-flota
+    container_name: ms-flota
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SERVER_PORT: 8081
+    depends_on:
+      - db
+    networks:
+      - tp-network
+
+  # 🗺️ Microservicio Rutas
+  ms-rutas:
+    build: ./ms-rutas
+    container_name: ms-rutas
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SERVER_PORT: 8082
+    depends_on:
+      - db
+    networks:
+      - tp-network
+
+  # 📦 Microservicio Solicitudes
+  ms-solicitudes:
+    build: ./ms-solicitudes
+    container_name: ms-solicitudes
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SERVER_PORT: 8083
+    depends_on:
+      - db
+    networks:
+      - tp-network
+
+  # 🌐 API Gateway
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ms-flota
+      - ms-rutas
+      - ms-solicitudes
+    networks:
+      - tp-network
+
+# Volumen persistente para Postgres
+volumes:
+  db_data:
+
+# Red compartida entre contenedores
+networks:
+  tp-network:
+    driver: bridge
