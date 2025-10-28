@@ -8,7 +8,7 @@ import lombok.*;
  * Puede depender del tipo de contenedor, la distancia y el peso total.
  */
 @Entity
-@Table(name = "tarifa")
+@Table(name = "tarifas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,21 +17,20 @@ public class Tarifa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_tarifa")
+    private Integer idTarifa;
 
-    // Tipo de contenedor (20 pies, 40 pies, refrigerado, etc.)
-    @Column(nullable = false)
-    private String tipoContenedor;
+    @Column(nullable = false, name = "tipo_tarifa")
+    private String tipoTarifa;
 
-    // Precio base en pesos argentinos
-    @Column(nullable = false)
-    private Double precioBase;
+    @Column(name = "costo_litro_combustible")
+    private Float costoLitroCombustible;
 
-    // Precio por kilómetro
-    @Column(nullable = false)
-    private Double precioPorKm;
+    @Column(name = "cargo_gestion_tramo")
+    private Float cargoGestionTramo;
 
-    // Precio por tonelada adicional
-    @Column(nullable = false)
-    private Double precioPorTonelada;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dominio_camion")
+    private Camion camion;
+
 }

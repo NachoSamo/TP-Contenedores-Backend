@@ -13,18 +13,17 @@ public class Deposito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_deposito")
     private Long idDeposito;
 
+    @Column(nullable = false)
     private String nombre;
-    private String direccion;
-    private Double latitud;
-    private Double longitud;
 
-    private Double costoPorDia;
-    private Boolean activo = true;
+    @Column(nullable = false, name = "costo_estadia_diaria")
+    private Float costoEstadiaDiaria;
 
-    // FK hacia la ruta
-    @ManyToOne
-    @JoinColumn(name = "id_ruta")
-    private Ruta ruta;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_geo")
+    private Geolocalizacion geolocalizacion;
+
 }

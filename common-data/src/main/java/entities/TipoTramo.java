@@ -2,6 +2,9 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
@@ -14,12 +17,11 @@ public class TipoTramo {
     @Column(name = "id_tipo_tramo")
     private Integer idTipoTramo; // PK (int), autogenerada
 
-    @Column(name = "nombre_tipo")
-    private String nombreTipo; // Columna "descripcion" del DER
+    @Column(name = "nombre_tipo", nullable = false)
+    private String nombreTipo;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tramo")
-    private Tramo tramo;
-
+    @OneToMany(mappedBy = "tipoTramo", fetch = FetchType.LAZY)
+    @ToString.Exclude @EqualsAndHashCode.Exclude
+    private List<Tramo> tramos;
 
 }

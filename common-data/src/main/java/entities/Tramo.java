@@ -12,7 +12,7 @@ public class Tramo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tramo")
-    private Long idTramo;
+    private Integer idTramo;
 
     // Relación con Ruta (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,29 +20,37 @@ public class Tramo {
     private Ruta ruta;
 
     // Relaciones geográficas (origen y destino)
-    @Column(name = "origen_geo")
-    private Integer origenGeo; // FK a tabla Geografía (si existe en otro microservicio)
 
-    @Column(name = "destino_geo")
-    private Integer destinoGeo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origen_geo")
+    private Geolocalizacion origenGeo;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destino_geo")
+    private Geolocalizacion destinoGeo;
 
     // Depósitos asociados
-    @Column(name = "origen_deposito_id")
-    private Integer origenDepositoId;
 
-    @Column(name = "destino_deposito_id")
-    private Integer destinoDepositoId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origen_deposito_id")
+    private Deposito origenDeposito;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destino_deposito_id")
+    private Deposito destinoDeposito;
 
     // Tipo de tramo
-    @Column(name = "tipo_tramo")
-    private Integer tipoTramo; // FK al catálogo de tipos de tramo (tabla referencial)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_tramo", nullable = false)
+    private TipoTramo tipoTramo; // FK al catálogo de tipos de tramo (tabla referencial)
 
     // Estado actual del tramo
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_estado")
+    @JoinColumn(name = "id_estado", nullable = false)
     private Estado estado;
 
-    @Column(name = "orden")
+    @Column(name = "orden", nullable = false)
     private Integer orden;
 
     // Fechas previstas
@@ -67,6 +75,7 @@ public class Tramo {
     private Float costoReal;
 
     // Relación lógica con microservicio Flota
-    @Column(name = "dominio_camion", length = 15)
-    private String dominioCamion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dominio_camion")
+    private Camion camion;
 }

@@ -2,6 +2,9 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.List;
 
 /**
@@ -19,17 +22,20 @@ public class Ruta {
     private Integer idRuta; // PK autoincremental
 
     // 🔹 Relación con Solicitud (FK)
-    @Column(name = "nro_solicitud", nullable = false)
-    private Integer nroSolicitud; // FK hacia el microservicio de solicitudes
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nro_solicitud")
+    private Solicitud solicitud; // FK hacia el microservicio de solicitudes
 
     // 🔹 Atributos propios de la ruta
-    @Column(name = "cant_tramos")
-    private Integer cantTramos;
+    @Column(name = "cantidad_tramos", insertable = false)
+    private Integer cantidadTramos;
 
-    @Column(name = "cant_depositos")
-    private Integer cantDepositos;
+    @Column(name = "cantidad_depositos", insertable = false)
+    private Integer cantidadDepositos;
 
     // 🔹 Relación Uno a Muchos → una Ruta tiene varios Tramos
-    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ruta", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Tramo> tramos;
 }

@@ -16,7 +16,7 @@ public class Geolocalizacion {
     @Column(nullable = false, name = "id_geo")
     private Integer idGeo; // PK autoincremental
 
-    @Column(nullable = false, length = 255)
+    @Column
     private String direccion;
 
     @Column(nullable = false)

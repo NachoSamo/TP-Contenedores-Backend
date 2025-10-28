@@ -2,6 +2,8 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -26,19 +28,24 @@ public class Transportista {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String dni;
 
-    @Column(nullable = false)
+    @Column
     private String telefono;
 
-    @Column(nullable = false)
-    private String licencia;
+    @Column
+    private String email;
+
+    @Column(name = "fecha_nacimiento")
+    private LocalDate fechaNacimiento;
 
     @Column(nullable = false)
-    private String estado; // Ej: "disponible", "en_ruta", "inactivo"
+    private Boolean activo = true;
 
     // 🔹 Relación: un transportista puede tener varios camiones
-    @OneToMany(mappedBy = "transportista", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "transportista", fetch = FetchType.LAZY)
+    @ToString.Exclude @EqualsAndHashCode.Exclude
     private List<Camion> camiones;
+
 }

@@ -2,6 +2,9 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
@@ -35,5 +38,7 @@ public class Contenedor {
 
     // Relación "asociado_a": Un Contenedor puede estar en muchas Solicitudes
     @OneToMany(mappedBy = "contenedor", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Solicitud> solicitudes;
 }

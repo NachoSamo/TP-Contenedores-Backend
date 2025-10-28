@@ -2,6 +2,9 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
@@ -23,9 +26,19 @@ public class Estado {
 
     // Relación: Un Estado puede estar en muchos ContenedTenedores
     @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Contenedor> contenedores;
 
     // Relación: Un Estado puede estar en muchas Solicitudes
     @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Solicitud> solicitudes;
+
+    // Relación: Un Estado puede estar en muchos Tramos
+    @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Tramo> tramos;
 }
