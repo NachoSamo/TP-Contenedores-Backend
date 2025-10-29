@@ -1,0 +1,18 @@
+package com.tpi.backend.msrutas.dto;
+
+import lombok.Data;
+import java.util.List;
+
+/**
+ * DTO que representa una ruta logística completa.
+ */
+@Data
+public class RutaDTO {
+    private Integer idRuta;
+    private Integer nroSolicitud;
+    private Integer cantTramos;
+    private Integer cantDepositos;
+
+    // Lista de tramos asociados
+    private List<TramoDTO> tramos;
+}
