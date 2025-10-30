@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql   # 👈 acá se inicializa tu esquema
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql  
       - postgres_data:/var/lib/postgresql/data
     networks:
       - tp-network
