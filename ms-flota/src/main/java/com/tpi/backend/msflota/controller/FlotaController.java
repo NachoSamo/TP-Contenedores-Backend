@@ -1,12 +1,13 @@
 package com.tpi.backend.msflota.controller;
 
-import entities.Camion;
-import entities.Tarifa;
-import entities.Transportista;
+import com.tpi.backend.msflota.dto.*;
 import com.tpi.backend.msflota.service.FlotaService;
+import com.tpi.backend.msflota.util.FlotaMapper;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.stream.Collectors;
+import lombok.*;
+
 
 /**
  * Controlador REST del microservicio de flota.
@@ -17,50 +18,70 @@ import java.util.List;
 public class FlotaController {
 
     private final FlotaService flotaService;
+    private final FlotaMapper flotaMapper;
 
-    public FlotaController(FlotaService flotaService) {
+    public FlotaController(FlotaService flotaService, FlotaMapper flotaMapper) {
         this.flotaService = flotaService;
+        this.flotaMapper = flotaMapper;
     }
 
     // -------------------- CAMIONES --------------------
     @GetMapping("/camiones")
-    public List<Camion> listarCamiones() {
-        return flotaService.obtenerCamiones();
+    public List<CamionDTO> listarCamiones() {
+        return flotaService.obtenerCamiones()
+                .stream()
+                .map(flotaMapper::toCamionDTO)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/camiones")
-    public Camion registrarCamion(@RequestBody Camion camion) {
-        return flotaService.registrarCamion(camion);
+    public CamionDTO registrarCamion(@RequestBody CamionDTO dto) {
+        var camion = flotaMapper.toCamionEntity(dto);
+        var nuevo = flotaService.registrarCamion(camion);
+        return flotaMapper.toCamionDTO(nuevo);
     }
 
     @GetMapping("/camiones/disponibles")
-    public List<Camion> obtenerCamionesDisponibles() {
-        return flotaService.obtenerCamionesDisponibles();
+    public List<CamionDTO> obtenerCamionesDisponibles() {
+        return flotaService.obtenerCamionesDisponibles()
+                .stream()
+                .map(flotaMapper::toCamionDTO)
+                .collect(Collectors.toList());
     }
 
     // -------------------- TRANSPORTISTAS --------------------
     @GetMapping("/transportistas")
-    public List<Transportista> listarTransportistas() {
-        return flotaService.listarTransportistas();
+    public List<TransportistaDTO> listarTransportistas() {
+        return flotaService.listarTransportistas()
+                .stream()
+                .map(flotaMapper::toTransportistaDTO)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/transportistas")
-    public Transportista crearTransportista(@RequestBody Transportista t) {
-        return flotaService.crearTransportista(t);
+    public TransportistaDTO crearTransportista(@RequestBody TransportistaDTO dto) {
+        var entidad = flotaMapper.toTransportistaEntity(dto);
+        var nuevo = flotaService.crearTransportista(entidad);
+        return flotaMapper.toTransportistaDTO(nuevo);
     }
 
     // -------------------- TARIFAS --------------------
     @GetMapping("/tarifas")
-    public List<Tarifa> listarTarifas() {
-        return flotaService.listarTarifas();
+    public List<TarifaDTO> listarTarifas() {
+        return flotaService.listarTarifas()
+                .stream()
+                .map(flotaMapper::toTarifaDTO)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/tarifas")
-    public Tarifa crearTarifa(@RequestBody Tarifa tarifa) {
-        return flotaService.crearTarifa(tarifa);
+    public TarifaDTO crearTarifa(@RequestBody TarifaDTO dto) {
+        var entidad = flotaMapper.toTarifaEntity(dto);
+        var nueva = flotaService.crearTarifa(entidad);
+        return flotaMapper.toTarifaDTO(nueva);
     }
 
-    // -------------------- CALCULO DE COSTO --------------------
+    // -------------------- CÁLCULO DE COSTO --------------------
     @GetMapping("/tarifas/calcular")
     public Double calcularCosto(@RequestParam String tipoContenedor,
                                 @RequestParam Double distancia,

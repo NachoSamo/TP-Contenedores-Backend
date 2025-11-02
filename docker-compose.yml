@@ -1,0 +1,103 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: tp_contenedores
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql  
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ms-flota:
+    build:
+      context: .
+      dockerfile: ms-flota/Dockerfile
+    container_name: ms-flota
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8081:8080"
+    networks:
+      - tp-network
+
+  ms-rutas:
+    build:
+      context: .
+      dockerfile: ms-rutas/Dockerfile
+    container_name: ms-rutas
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8082:8080"
+    networks:
+      - tp-network
+
+  ms-solicitudes:
+    build:
+      context: .
+      dockerfile: ms-solicitudes/Dockerfile
+    container_name: ms-solicitudes
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tp_contenedores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8083:8080"
+    networks:
+      - tp-network
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    depends_on:
+      ms-flota:
+        condition: service_started
+      ms-rutas:
+        condition: service_started
+      ms-solicitudes:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks:
+      - tp-network
+
+volumes:
+  postgres_data:
+
+networks:
+  tp-network:
+    driver: bridge

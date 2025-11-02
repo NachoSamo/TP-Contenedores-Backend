@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Servicio de aplicación para la gestión de la flota.
- * Coordina las operaciones entre los repositorios y aplica lógica de negocio.
- */
 @Service
 public class FlotaService {
 
@@ -29,9 +25,7 @@ public class FlotaService {
         this.transportistaRepository = transportistaRepository;
     }
 
-    // ============================
-    // 🔹 Gestión de Camiones
-    // ============================
+    // -------- CAMIONES --------
     public List<Camion> obtenerCamiones() {
         return camionRepository.findAll();
     }
@@ -41,41 +35,67 @@ public class FlotaService {
     }
 
     public List<Camion> obtenerCamionesDisponibles() {
-        return camionRepository.findByTransportista_Estado("disponible");
+        // Buscar camiones cuya disponibilidad sea true
+        return camionRepository.findByDisponibilidad(Boolean.TRUE);
     }
 
-    // ============================
-    // 🔹 Gestión de Transportistas
-    // ============================
+    // -------- TRANSPORTISTAS --------
     public List<Transportista> listarTransportistas() {
         return transportistaRepository.findAll();
     }
 
-    public Transportista crearTransportista(Transportista t) {
-        return transportistaRepository.save(t);
+    public Transportista crearTransportista(Transportista transportista) {
+        return transportistaRepository.save(transportista);
     }
 
-    // ============================
-    // 🔹 Gestión de Tarifas
-    // ============================
+    // -------- TARIFAS --------
     public List<Tarifa> listarTarifas() {
         return tarifaRepository.findAll();
     }
 
-    public Tarifa crearTarifa(Tarifa t) {
-        return tarifaRepository.save(t);
+    public Tarifa crearTarifa(Tarifa tarifa) {
+        return tarifaRepository.save(tarifa);
     }
 
     /**
-     * Calcula el costo estimado de un viaje.
-     * @param tipoContenedor tipo de contenedor (ej: 40 pies)
-     * @param distancia distancia en km
-     * @param peso peso en toneladas
-     * @return costo total estimado
+     * Calcula un costo aproximado de traslado según una tarifa encontrada por tipo.
+     * Implementación defensiva: busca en todas las tarifas el que coincida con el tipo
+     * y aplica una fórmula simple:
+     *   costo = cargoGestionTramo + (costoLitroCombustible * distancia * consumoFactor) + peso * factorPeso
+     * Donde consumoFactor se toma del camión asociado si existe; en otro caso se usa 1.0.
+     *
+     * @param tipoContenedor nombre/tipo para buscar la tarifa
+     * @param distancia km previstos
+     * @param peso en kg
+     * @return costo estimado (Double)
      */
     public Double calcularCosto(String tipoContenedor, Double distancia, Double peso) {
-        Tarifa tarifa = tarifaRepository.findByTipoContenedor(tipoContenedor);
-        if (tarifa == null) throw new RuntimeException("No existe tarifa para el tipo: " + tipoContenedor);
-        return tarifa.getPrecioBase() + (distancia * tarifa.getPrecioPorKm()) + (peso * tarifa.getPrecioPorTonelada());
+        if (tipoContenedor == null || distancia == null || peso == null) return 0.0;
+
+        Tarifa tarifa = tarifaRepository.findAll()
+                .stream()
+                .filter(t -> t.getTipoTarifa() != null && t.getTipoTarifa().equalsIgnoreCase(tipoContenedor))
+                .findFirst()
+                .orElseGet(() -> tarifaRepository.findAll().stream().findFirst().orElse(null));
+
+        if (tarifa == null) return 0.0;
+
+        double cargo = tarifa.getCargoGestionTramo() != null ? tarifa.getCargoGestionTramo() : 0.0;
+        double costoLitro = tarifa.getCostoLitroCombustible() != null ? tarifa.getCostoLitroCombustible() : 0.0;
+
+        // intentar obtener consumo del camion asociado si está presente
+        double consumoFactor = 1.0;
+        try {
+            if (tarifa.getCamion() != null && tarifa.getCamion().getConsumoPromKm() != null) {
+                consumoFactor = tarifa.getCamion().getConsumoPromKm();
+            }
+        } catch (Exception ignored) {
+        }
+
+        // factor por kg (arbitrario, ajustable)
+        double factorPeso = 0.02; // ejemplo: $0.02 por kg
+
+        double costo = cargo + (costoLitro * distancia * consumoFactor) + (peso * factorPeso);
+        return costo;
     }
 }

@@ -3,12 +3,7 @@ package com.tpi.backend.msflota.repository;
 import entities.Tarifa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-/**
- * Repositorio JPA para las tarifas.
- * Permite buscar o crear tarifas según el tipo de contenedor.
- */
-public interface TarifaRepository extends JpaRepository<Tarifa, Long> {
-
-    // Buscar una tarifa específica por tipo de contenedor
-    Tarifa findByTipoContenedor(String tipoContenedor);
+public interface TarifaRepository extends JpaRepository<Tarifa, Integer> {
+    // Buscar tarifa por su tipo tal como está en la entidad (tipoTarifa)
+    Tarifa findByTipoTarifa(String tipoTarifa);
 }
