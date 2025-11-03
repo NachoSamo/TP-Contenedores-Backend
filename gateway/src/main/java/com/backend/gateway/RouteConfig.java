@@ -17,7 +17,7 @@ public class RouteConfig {
             .route("rutas", r -> r.path("/api/rutas/**")
                 .uri("http://ms-rutas:8082"))
             .route("flota", r -> r.path("/api/flota/**")
-                .uri("http://ms-flota:8081"))
+                .uri("http://ms-flota:8085"))
             .build();
     }
 }
