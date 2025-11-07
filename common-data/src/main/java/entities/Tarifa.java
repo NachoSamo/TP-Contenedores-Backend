@@ -33,4 +33,9 @@ public class Tarifa {
     @JoinColumn(name = "dominio_camion")
     private Camion camion;
 
+    public Object getCostoHora() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCostoHora'");
+    }
+
 }

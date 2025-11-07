@@ -12,10 +12,10 @@
     <name>ms-flota</name>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.tpi.backend</groupId>
+        <artifactId>TP-Contenedores-Backend</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -91,11 +91,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Lombok annotation processing -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+            <!-- (annotation processing handled by maven-compiler-plugin above) -->
         </plugins>
     </build>
 </project>

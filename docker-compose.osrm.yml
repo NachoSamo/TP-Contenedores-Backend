@@ -1,0 +1,11 @@
+services:
+  osrm:
+    image: osrm/osrm-backend:latest
+    container_name: osrm
+    ports:
+      - "5000:5000"
+    volumes:
+      # Monta la carpeta 'osrm-data' que contiene los archivos procesados
+      - ./osrm-data:/data 
+    command: >
+      osrm-routed /data/argentina-251104.osrm
