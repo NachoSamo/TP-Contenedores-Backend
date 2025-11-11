@@ -11,13 +11,20 @@ public class RouteConfig {
     @Bean
     public RouteLocator customRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("solicitudes", r -> r.path("/api/solicitudes/**")
-                .filters(f -> f.addRequestHeader("X-Gateway", "true"))
-                .uri("http://ms-solicitudes:8083"))
-            .route("rutas", r -> r.path("/api/rutas/**")
-                .uri("http://ms-rutas:8082"))
-            .route("flota", r -> r.path("/api/flota/**")
-                .uri("http://ms-flota:8085"))
-            .build();
+                // Ruta para el microservicio de solicitudes
+                .route("solicitudes", r -> r.path("/api/solicitudes/**")
+                        .filters(f -> f.stripPrefix(2))
+                        .uri("http://ms-solicitudes:8080"))
+
+                // Ruta para el microservicio de rutas
+                .route("rutas", r -> r.path("/api/rutas/**")
+                        .filters(f -> f.stripPrefix(2))
+                        .uri("http://ms-rutas:8080"))
+
+                // Ruta para el microservicio de flota
+                .route("flota", r -> r.path("/api/flota/**")
+                        .filters(f -> f.stripPrefix(2))
+                        .uri("http://ms-flota:8080"))
+                .build();
     }
 }
