@@ -91,11 +91,11 @@
                 </configuration>
             </plugin>
 
-            <!-- Lombok annotation processing -->
+            <!-- Lombok annotation processing
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 </project>
