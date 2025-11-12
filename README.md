@@ -105,3 +105,7 @@ El sistema se divide en los siguientes componentes:
 ## 🎥 Video 1° Entrega
 
 * [cite_start][Enlace al video de la presentación](URL_DEL_VIDEO) [cite: 19] *(Reemplazar por el link real)*
+  Comandos para ver la creacion de las tablas en PostgreSQL
+  docker exec -it postgres-db-contenedores bash
+* psql -U postgres -d tp_contenedores
+* \dt
