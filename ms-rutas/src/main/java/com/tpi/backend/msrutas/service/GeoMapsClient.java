@@ -41,13 +41,13 @@ public class GeoMapsClient {
             return null;
         }
 
-        [cite_start]// Formato de OSRM: longitud,latitud;longitud,latitud [cite: 84]
+        // Formato de OSRM: longitud,latitud;longitud,latitud [cite: 84]
         String coordinates = String.format("%.6f,%.6f;%.6f,%.6f", 
                                            origen.getLongitud(), origen.getLatitud(), 
                                            destino.getLongitud(), destino.getLatitud());
 
         URI uri = UriComponentsBuilder.fromHttpUrl(osrmBaseUrl + osrmRouteEndpoint + coordinates)
-                                    [cite_start].queryParam("overview", "false") // Para respuesta más ligera [cite: 83]
+                                    .queryParam("overview", "false") // Para respuesta más ligera [cite: 83]
                                     .build()
                                     .toUri();
         
@@ -59,9 +59,4 @@ public class GeoMapsClient {
             return null;
         }
     }
-    
-    /* * NOTA: Eliminamos el método geocodeAddress, ya que la funcionalidad es de ruteo con OSRM. 
-     * Si necesitas la geocodificación por dirección, deberías mantener la lógica de Google Maps 
-     * en un cliente separado (ej. GoogleMapsClient) para no mezclar responsabilidades.
-     */
 }

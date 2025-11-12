@@ -95,8 +95,17 @@
                     <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
-
-            <!-- (annotation processing handled by maven-compiler-plugin above) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

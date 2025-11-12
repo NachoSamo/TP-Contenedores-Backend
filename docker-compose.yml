@@ -20,8 +20,11 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin123
+      - KC_HOSTNAME_URL=http://keycloak:8080
     volumes:
       - keycloak_data:/opt/keycloak/data
+    networks:
+      - tp-network
 
 
 
@@ -48,8 +51,8 @@ services:
 
   ms-flota:
     build:
-      context: .
-      dockerfile: ms-flota/Dockerfile
+      context: ./ms-flota
+      dockerfile: Dockerfile
     container_name: ms-flota
     restart: unless-stopped
     depends_on:
@@ -67,8 +70,8 @@ services:
 
   ms-rutas:
     build:
-      context: .
-      dockerfile: ms-rutas/Dockerfile
+      context: ./ms-rutas
+      dockerfile: Dockerfile
     container_name: ms-rutas
     restart: unless-stopped
     depends_on:
@@ -89,8 +92,8 @@ services:
 
   ms-solicitudes:
     build:
-      context: .
-      dockerfile: ms-solicitudes/Dockerfile
+      context: ./ms-solicitudes
+      dockerfile: Dockerfile
     container_name: ms-solicitudes
     restart: unless-stopped
     depends_on:

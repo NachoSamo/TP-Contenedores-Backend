@@ -14,7 +14,7 @@ import lombok.*;
  * Expone endpoints para gestionar camiones, transportistas y tarifas.
  */
 @RestController
-@RequestMapping("/api/flota")
+@RequestMapping("/")
 public class FlotaController {
 
     private final FlotaService flotaService;

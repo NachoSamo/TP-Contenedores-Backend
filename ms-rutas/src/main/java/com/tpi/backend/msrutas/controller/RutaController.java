@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/rutas")
+@RequestMapping("/")
 public class RutaController {
 
     private final RutaService rutaService;
