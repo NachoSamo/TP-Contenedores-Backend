@@ -8,12 +8,11 @@ COPY ms-flota/pom.xml ms-flota/pom.xml
 COPY ms-rutas/pom.xml ms-rutas/pom.xml
 COPY ms-solicitudes/pom.xml ms-solicitudes/pom.xml
 COPY gateway/pom.xml gateway/pom.xml
-# copy full source tree
+# copy full source tree (including src)
 COPY . .
-# build only the module and required modules
-RUN mvn -pl ms-flota -am -DskipTests package
+RUN mvn -pl ms-flota -am -DskipTests install
 
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 # copy the built jar from the build stage
 COPY --from=build /workspace/ms-flota/target/ms-flota-0.0.1-SNAPSHOT.jar /app/app.jar
