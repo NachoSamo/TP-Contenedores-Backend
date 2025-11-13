@@ -22,6 +22,8 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=admin123
     volumes:
       - keycloak_data:/opt/keycloak/data
+    networks:
+      - tp-network
 
 
 
