@@ -59,9 +59,4 @@ public class GeoMapsClient {
             return null;
         }
     }
-    
-    /* * NOTA: Eliminamos el método geocodeAddress, ya que la funcionalidad es de ruteo con OSRM. 
-     * Si necesitas la geocodificación por dirección, deberías mantener la lógica de Google Maps 
-     * en un cliente separado (ej. GoogleMapsClient) para no mezclar responsabilidades.
-     */
 }
