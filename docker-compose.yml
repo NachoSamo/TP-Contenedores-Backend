@@ -43,6 +43,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - tp-network
+    expose:
+      - "8080"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -65,6 +67,8 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
       - "8085:8080"
+    expose:
+      - "8080"
     networks:
       - tp-network
 
@@ -87,6 +91,8 @@ services:
       OSRM_BASE_URL: http://osrm:5000
     ports:
       - "8082:8080"
+    expose:
+      - "8080"
     networks:
       - tp-network
 
@@ -106,6 +112,8 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
       - "8083:8080"
+    expose:
+      - "8080"
     networks:
       - tp-network
 
@@ -124,6 +132,9 @@ services:
         condition: service_started
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/tpi-backend
     networks:
       - tp-network
 
