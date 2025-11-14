@@ -1,5 +1,5 @@
-# Usa una imagen base ligera con solo el entorno de ejecución de Java (JRE)
-FROM eclipse-temurin:21-jre
+# Imagen base con Java 21 (JDK)
+FROM eclipse-temurin:21-jdk
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
