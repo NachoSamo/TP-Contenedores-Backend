@@ -36,7 +36,12 @@ public class SolicitudService {
     }
 
     // -------- CLIENTES --------
-    public List<Cliente> listarClientes() {
+    public List<Cliente> listarClientes(String dni) {
+        if (dni != null && !dni.isBlank()) {
+            return clienteRepository.findByDni(dni)
+                    .map(List::of)
+                    .orElse(List.of());
+        }
         return clienteRepository.findAll();
     }
 
