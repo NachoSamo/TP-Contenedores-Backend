@@ -37,8 +37,8 @@ public class SolicitudController {
 
     // -------- CLIENTES --------
     @GetMapping("/clientes")
-    public List<ClienteDTO> listarClientes() {
-        return solicitudService.listarClientes()
+    public List<ClienteDTO> listarClientes(@RequestParam(required = false) String dni) {
+        return solicitudService.listarClientes(dni)
                 .stream()
                 .map(mapper::toClienteDTO)
                 .collect(Collectors.toList());
