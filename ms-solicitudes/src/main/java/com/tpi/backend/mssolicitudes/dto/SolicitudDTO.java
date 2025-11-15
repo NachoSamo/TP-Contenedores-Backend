@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 public class SolicitudDTO {
     private Integer nroSolicitud;
     private Float costoEstimado;
-    private Float tiempoEstimado;
+    private Integer tiempoEstimado;
     private Float costoReal;
-    private Float tiempoReal;
+    private Integer tiempoReal;
     private LocalDateTime fechaCreacion;
 
     private Integer dniCliente;   // FK Cliente

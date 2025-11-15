@@ -13,9 +13,9 @@ public class SolicitudMapper {
         dto.setNroSolicitud(e.getNroSolicitud());
         dto.setCostoEstimado(e.getCostoEstimado());
         // entidad guarda tiempo como Integer, DTO usa Float -> convertir
-        dto.setTiempoEstimado(e.getTiempoEstimado() != null ? e.getTiempoEstimado().floatValue() : null);
+        dto.setTiempoEstimado(e.getTiempoEstimado() != null ? e.getTiempoEstimado(): null);
         dto.setCostoReal(e.getCostoReal());
-        dto.setTiempoReal(e.getTiempoReal() != null ? e.getTiempoReal().floatValue() : null);
+        dto.setTiempoReal(e.getTiempoReal() != null ? e.getTiempoReal() : null);
         dto.setFechaCreacion(e.getFechaCreacion());
         dto.setDniCliente(e.getCliente() != null ? e.getCliente().getDniCliente() : null);
         dto.setIdContenedor(e.getContenedor() != null ? e.getContenedor().getIdContenedor() : null);
