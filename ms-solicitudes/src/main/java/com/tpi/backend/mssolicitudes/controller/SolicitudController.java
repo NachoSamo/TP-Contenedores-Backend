@@ -4,6 +4,7 @@ import com.tpi.backend.mssolicitudes.dto.*;
 import com.tpi.backend.mssolicitudes.service.SolicitudService;
 import com.tpi.backend.mssolicitudes.util.SolicitudMapper;
 import entities.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,9 +36,21 @@ public class SolicitudController {
         return mapper.toSolicitudDTO(solicitud);
     }
 
+    @PutMapping("/{nroSolicitud}")
+    public ResponseEntity<SolicitudDTO> actualizarSolicitud(
+            @PathVariable Integer nroSolicitud,
+            @RequestBody SolicitudDTO dto) {
+
+        Solicitud solicitudActualizada = solicitudService.actualizarSolicitud(nroSolicitud, dto);
+        return ResponseEntity.ok(mapper.toSolicitudDTO(solicitudActualizada));
+    }
+
+
     // -------- CLIENTES --------
     @GetMapping("/clientes")
-    public List<ClienteDTO> listarClientes(@RequestParam(required = false) String dni) {
+    public List<ClienteDTO> listarClientes(@RequestParam(required = false) Integer dni) {
+        System.out.println(">>> DNI recibido: " + dni);
+
         return solicitudService.listarClientes(dni)
                 .stream()
                 .map(mapper::toClienteDTO)
@@ -52,9 +65,13 @@ public class SolicitudController {
 
     // -------- CONTENEDORES --------
     @GetMapping("/contenedores")
-    public List<ContenedorDTO> listarContenedores() {
-        return solicitudService.listarContenedores()
-                .stream()
+    public List<ContenedorDTO> listarContenedores(@RequestParam(required = false) String estado) {
+
+        var contenedores = (estado != null && !estado.isBlank())
+                ? solicitudService.listarContenedoresPorEstadoNombre(estado)
+                : solicitudService.listarContenedores();
+
+        return contenedores.stream()
                 .map(mapper::toContenedorDTO)
                 .collect(Collectors.toList());
     }
