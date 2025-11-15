@@ -3,9 +3,6 @@ package com.tpi.backend.msrutas.dto;
 import lombok.Data;
 import java.time.LocalDateTime;
 
-/**
- * DTO que representa un tramo individual dentro de una ruta.
- */
 @Data
 public class TramoDTO {
     private Integer idTramo;
@@ -27,5 +24,5 @@ public class TramoDTO {
     private Float costoAproximado;
     private Float costoReal;
 
-    private String dominioCamion; // FK lógica hacia Flota
+    private String dominioCamion;
 }

@@ -3,9 +3,6 @@ package com.tpi.backend.msrutas.dto;
 import lombok.Data;
 import java.util.List;
 
-/**
- * DTO que representa una ruta logística completa.
- */
 @Data
 public class RutaDTO {
     private Integer idRuta;
