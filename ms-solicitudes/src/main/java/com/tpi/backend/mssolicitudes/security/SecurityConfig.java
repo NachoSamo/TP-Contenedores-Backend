@@ -23,6 +23,10 @@ public class SecurityConfig {
                         // USERS pueden crear una nueva solicitud de transporte
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("USER", "ADMIN")
 
+                        //ADMINS pueden modificar la solicitud
+                        .requestMatchers(HttpMethod.PUT, "/api/solicitudes/**").hasRole("ADMIN")
+
+
                         // USERS pueden listar toda la información
                         .requestMatchers(HttpMethod.GET, "/api/solicitudes/**").hasAnyRole("USER", "ADMIN")
 
