@@ -28,12 +28,12 @@ public class GeoService {
                 "&units=metric&key=" + apiKey;
 
         try {
-            // 1. Llama a la API externa. Si falla la conexión (4xx, 5xx de Google), salta al primer catch.
+            // 1. Llama a la API externa. Si falla la conexión, salta al primer catch.
             response = client.get().uri(url).retrieve().toEntity(String.class);
         } catch (RestClientException e) {
             // DIAGNÓSTICO HTTP/CONEXIÓN
-            System.err.println("❌ ERROR HTTP: Fallo de comunicación con la API de Google Maps.");
-            e.printStackTrace(); // Esto revela el código 400/403/503 real de Google Maps.
+            System.err.println("ERROR HTTP: Fallo de comunicación con la API de Google Maps.");
+            e.printStackTrace();
             throw new Exception("Error de comunicación con Google Maps (revisar clave o permisos)", e);
         }
 
@@ -43,7 +43,7 @@ public class GeoService {
             ObjectMapper mapper = new ObjectMapper();
 
             // Loguear el cuerpo antes de parsear para el diagnóstico
-            System.out.println("✅ Body de respuesta de Google Maps: " + response.getBody());
+            System.out.println("Body de respuesta de Google Maps: " + response.getBody());
 
             JsonNode root = mapper.readTree(response.getBody());
 
@@ -70,13 +70,12 @@ public class GeoService {
             return dto;
         } catch (JsonProcessingException e) {
             // DIAGNÓSTICO PARSEO JSON
-            System.err.println("❌ ERROR JSON: Fallo al parsear la respuesta JSON de Google Maps.");
+            System.err.println("ERROR JSON: Fallo al parsear la respuesta JSON de Google Maps.");
             System.err.println("Cuerpo Recibido: " + response.getBody());
-            e.printStackTrace(); // Esto revela la causa del fallo de parseo.
+            e.printStackTrace();
             throw new Exception("Error de procesamiento de la respuesta JSON", e);
         } catch (Exception e) {
-            // Esto captura las excepciones lanzadas en el punto 3 (errores de negocio o estructura)
-            System.err.println("❌ ERROR LÓGICA: Fallo al procesar el JSON válido.");
+            System.err.println("ERROR LÓGICA: Fallo al procesar el JSON válido.");
             e.printStackTrace();
             throw e;
         }

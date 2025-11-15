@@ -18,11 +18,9 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        // Usa el convertidor por defecto para extraer las 'scopes' (ej: 'profile', 'email')
         JwtGrantedAuthoritiesConverter defaultConverter = new JwtGrantedAuthoritiesConverter();
         Collection<GrantedAuthority> authorities = defaultConverter.convert(jwt);
 
-        // Extrae los roles del claim 'realm_access' de Keycloak
         Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
         if (realmAccess != null && realmAccess.containsKey("roles")) {
             List<String> roles = (List<String>) realmAccess.get("roles");
@@ -30,7 +28,6 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
                     .collect(Collectors.toList());
 
-            // Combina los scopes y los roles de Keycloak
             authorities = Stream.concat(authorities.stream(), keycloakRoles.stream()).collect(Collectors.toSet());
         }
 
