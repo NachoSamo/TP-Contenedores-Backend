@@ -76,7 +76,7 @@ public class SolicitudService {
     // -------- CLIENTES --------
     public List<Cliente> listarClientes(Integer dni) {
         if (dni != null) {
-            return clienteRepository.buscarPorDni(dni);
+            return clienteRepository.findByDniCliente(dni);
         }
         System.out.println(">>> [SERVICE] Ejecutando findAll");
         return clienteRepository.findAll();
@@ -92,12 +92,41 @@ public class SolicitudService {
     }
 
     public List<Contenedor> listarContenedoresPorEstadoNombre(String nombreEstado) {
-        return contenedorRepository.findByEstado_NombreIgnoreCase(nombreEstado);
+        return contenedorRepository.findByEstado_DescripcionIgnoreCase(nombreEstado);
     }
 
     public Contenedor crearContenedor(Contenedor contenedor) {
-        return contenedorRepository.save(contenedor);
+        try {
+            System.out.println(">>> VALIDANDO CONTENEDOR: peso=" + contenedor.getPesoKg()
+                    + ", volumen=" + contenedor.getVolumenM3());
+
+            if (contenedor.getPesoKg() == null || contenedor.getPesoKg() <= 0) {
+                System.out.println(">>> PESO INVALIDO, LANZANDO EXCEPCION");
+                throw new IllegalArgumentException("El peso (kg) debe ser mayor que 0");
+            }
+
+            if (contenedor.getVolumenM3() == null || contenedor.getVolumenM3() <= 0) {
+                System.out.println(">>> VOLUMEN INVALIDO, LANZANDO EXCEPCION");
+                throw new IllegalArgumentException("El volumen (m3) debe ser mayor que 0");
+            }
+
+            return contenedorRepository.save(contenedor);
+
+        } catch (IllegalArgumentException ex) {
+            // Error de validación conocido
+            System.out.println(">>> ERROR VALIDANDO CONTENEDOR: " + ex.getMessage());
+            // Lo relanzás tal cual para que el controller (o un @ControllerAdvice) lo maneje
+            throw ex;
+
+        } catch (Exception ex) {
+            // Cualquier otro error inesperado
+            System.out.println(">>> ERROR INESPERADO CREANDO CONTENEDOR: " + ex.getMessage());
+            throw new RuntimeException("Error al crear el contenedor", ex);
+        }
     }
+
+
+
 
     // -------- ESTADOS --------
     public List<Estado> listarEstados() {

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ContenedorRepository extends JpaRepository<Contenedor, Integer> {
-    List<Contenedor> findByEstado_NombreIgnoreCase(String descripcion);
+    List<Contenedor> findByEstado_DescripcionIgnoreCase(String descripcion);
 }
