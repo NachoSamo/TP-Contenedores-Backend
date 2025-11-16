@@ -14,33 +14,59 @@ public class FlotaMapper {
     // ---------- CAMION ----------
     public CamionDTO toCamionDTO(Camion e) {
         CamionDTO dto = new CamionDTO();
-        // Ajuste de mapeo según las entidades del módulo common-data
-        dto.setDominio(e.getDominioCamion());
-        // No existe 'marca' ni 'modelo' en la entidad, dejar null por ahora
+
+        // ID / dominio
+        dto.setDominioCamion(e.getDominioCamion());
+
+        // En la entidad no hay 'modelo' (lo dejamos null por ahora)
         dto.setModelo(null);
-        // Mapear capacidades/volumen
+
+        // Capacidades
         dto.setCapacidadKg(e.getCapacidadPesoMax());
         dto.setVolumenM3(e.getCapacidadVolumenMax());
-        // Estado booleano -> String
+
+        // Disponibilidad y estado
         Boolean disp = e.getDisponibilidad();
-        dto.setEstado(disp != null && disp ? "disponible" : "no disponible");
+        boolean disponible = disp != null && disp;
+        dto.setDisponibilidad(disponible);
+
+        // Consumo y costo
+        dto.setConsumoPromKm(
+                e.getConsumoPromKm() != null ? e.getConsumoPromKm() : 0f
+        );
+        dto.setCostoTraslado(
+                e.getCostoTraslado() != null ? e.getCostoTraslado() : 0f
+        );
+
+        // Transportista (solo id)
         if (e.getTransportista() != null) {
             dto.setIdTransportista(e.getTransportista().getIdTransportista());
         } else {
             dto.setIdTransportista(null);
         }
+
         return dto;
     }
 
+
     public Camion toCamionEntity(CamionDTO dto) {
         Camion e = new Camion();
-        // Mapear los campos mínimos que existen en la entidad
-        e.setDominioCamion(dto.getDominio());
+
+        e.setDominioCamion(dto.getDominioCamion());
+
+        // Campos obligatorios de la entidad
         e.setCapacidadPesoMax(dto.getCapacidadKg());
         e.setCapacidadVolumenMax(dto.getVolumenM3());
-        e.setDisponibilidad(dto.getEstado() != null && dto.getEstado().equalsIgnoreCase("disponible"));
+        e.setConsumoPromKm(dto.getConsumoPromKm());
+        e.setCostoTraslado(dto.getCostoTraslado());
+        e.setDisponibilidad(dto.isDisponibilidad());
+
+        // Transportista:
+        e.setTransportista(null);
+
         return e;
     }
+
 
     // ---------- TRANSPORTISTA ----------
     public TransportistaDTO toTransportistaDTO(Transportista e) {

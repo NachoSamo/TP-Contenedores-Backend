@@ -15,16 +15,16 @@ public class RutaService {
     private final RutaRepository rutaRepository;
     private final TramoRepository tramoRepository;
     private final DepositoRepository depositoRepository;
-    private final GeoMapsClient geoMapsClient;
+    //private final GeoMapsClient geoMapsClient;
 
     public RutaService(RutaRepository rutaRepository,
                        TramoRepository tramoRepository,
-                       DepositoRepository depositoRepository,
-                       GeoMapsClient geoMapsClient) {
+                       DepositoRepository depositoRepository
+                       /*,GeoMapsClient geoMapsClient*/) {
         this.rutaRepository = rutaRepository;
         this.tramoRepository = tramoRepository;
         this.depositoRepository = depositoRepository;
-        this.geoMapsClient = geoMapsClient;
+        //this.geoMapsClient = geoMapsClient;
     }
 
     // -------- RUTAS --------

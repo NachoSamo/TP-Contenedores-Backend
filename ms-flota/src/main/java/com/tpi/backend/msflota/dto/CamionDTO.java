@@ -11,7 +11,6 @@ public class CamionDTO {
     private boolean disponibilidad;
     private float consumoPromKm;
     private float costoTraslado;
-    private String estado; // disponible, en ruta, mantenimiento
     private Integer idTransportista; // referencia, no objeto completo
 }
 

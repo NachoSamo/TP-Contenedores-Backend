@@ -1,12 +1,16 @@
 package com.tpi.backend.msflota.service;
 
+import com.tpi.backend.msflota.dto.CamionDTO;
+import com.tpi.backend.msflota.util.FlotaMapper;
 import entities.Camion;
 import entities.Tarifa;
 import entities.Transportista;
 import com.tpi.backend.msflota.repository.CamionRepository;
 import com.tpi.backend.msflota.repository.TarifaRepository;
 import com.tpi.backend.msflota.repository.TransportistaRepository;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,6 +55,61 @@ public class FlotaService {
     }
 
     public Camion registrarCamion(Camion camion) {
+        // 1) Validar dominio_camion (PK obligatoria)
+        if (camion.getDominioCamion() == null || camion.getDominioCamion().isBlank()) {
+            throw new IllegalArgumentException("El dominio_camion es obligatorio.");
+        }
+
+        String dominioCamion = camion.getDominioCamion();
+
+        // 2) El dominio_camion no debe existir previamente
+        boolean existeCamion = camionRepository.existsById(dominioCamion);
+        if (existeCamion) {
+            throw new IllegalArgumentException(
+                    "Ya existe un camión registrado con dominio " + dominioCamion
+            );
+        }
+
+        // 3) Validar capacidades y datos numéricos mínimos
+        if (camion.getCapacidadPesoMax() == null || camion.getCapacidadPesoMax() <= 0) {
+            throw new IllegalArgumentException("La capacidadKg (capacidad_peso_max) debe ser mayor a 0.");
+        }
+
+        if (camion.getCapacidadVolumenMax() == null || camion.getCapacidadVolumenMax() <= 0) {
+            throw new IllegalArgumentException("El volumenM3 (capacidad_volumen_max) debe ser mayor a 0.");
+        }
+
+        if (camion.getConsumoPromKm() == null || camion.getConsumoPromKm() <= 0) {
+            throw new IllegalArgumentException("El consumoPromKm debe ser mayor a 0.");
+        }
+
+        if (camion.getCostoTraslado() == null || camion.getCostoTraslado() <= 0) {
+            throw new IllegalArgumentException("El costoTraslado debe ser mayor a 0.");
+        }
+
+        // 4) Resolver transportista (si viene informado)
+        if (camion.getTransportista() != null &&
+                camion.getTransportista().getIdTransportista() != null) {
+
+            Integer idTransportista = camion.getTransportista().getIdTransportista();
+
+            var transportista = transportistaRepository.findById(idTransportista)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "No existe un transportista registrado con id " + idTransportista
+                    ));
+
+            camion.setTransportista(transportista);
+        } else {
+            // si no viene transportista, se deja en null explícitamente
+            camion.setTransportista(null);
+        }
+
+        // 5) Disponibilidad por defecto (si viene null)
+        if (camion.getDisponibilidad() == null) {
+            camion.setDisponibilidad(Boolean.TRUE); // por defecto disponible
+        }
+
+        // 6) Persistir camión
         return camionRepository.save(camion);
     }
 
@@ -58,6 +117,44 @@ public class FlotaService {
         // Buscar camiones cuya disponibilidad sea true
         return camionRepository.findByDisponibilidad(Boolean.TRUE);
     }
+
+
+    public Camion actualizarCamion(String dominio, CamionDTO dto) {
+        // 1) Buscar camión existente por dominio (PK)
+        Camion camion = camionRepository.findById(dominio)
+                .orElseThrow(() -> new RuntimeException("Camión no encontrado"));
+
+        // 2) Si el DTO trae dominioCamion no permitimos la modificación
+        if (dto.getDominioCamion() != null &&
+                !dto.getDominioCamion().isBlank() &&
+                !dto.getDominioCamion().equals(dominio)) {
+
+            throw new IllegalArgumentException("No se permite modificar el dominio del camión.");
+        }
+
+        if (dto.getCapacidadKg() != null) {
+            camion.setCapacidadPesoMax(dto.getCapacidadKg());
+        }
+
+        if (dto.getVolumenM3() != null) {
+            camion.setCapacidadVolumenMax(dto.getVolumenM3());
+        }
+
+        camion.setDisponibilidad(dto.isDisponibilidad());
+        camion.setConsumoPromKm(dto.getConsumoPromKm());
+        camion.setCostoTraslado(dto.getCostoTraslado());
+
+        // Actualizar transportista si viene idTransportista
+        if (dto.getIdTransportista() != null) {
+            Transportista transportista = transportistaRepository.findById(dto.getIdTransportista())
+                    .orElseThrow(() -> new RuntimeException("Transportista no encontrado"));
+            camion.setTransportista(transportista);
+        }
+
+
+        return camionRepository.save(camion);
+    }
+
 
     // -------- TRANSPORTISTAS --------
     public List<Transportista> listarTransportistas() {

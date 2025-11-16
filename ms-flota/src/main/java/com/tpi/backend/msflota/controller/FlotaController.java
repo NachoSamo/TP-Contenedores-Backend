@@ -4,6 +4,8 @@ import com.tpi.backend.msflota.dto.*;
 import com.tpi.backend.msflota.service.FlotaService;
 import com.tpi.backend.msflota.util.FlotaMapper;
 import entities.Camion;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +38,6 @@ public class FlotaController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/camiones")
-    public CamionDTO registrarCamion(@RequestBody CamionDTO dto) {
-        var camion = flotaMapper.toCamionEntity(dto);
-        var nuevo = flotaService.registrarCamion(camion);
-        return flotaMapper.toCamionDTO(nuevo);
-    }
-
     @GetMapping("/camiones/disponibles")
     public List<CamionDTO> obtenerCamionesDisponibles() {
         return flotaService.obtenerCamionesDisponibles()
@@ -50,6 +45,23 @@ public class FlotaController {
                 .map(flotaMapper::toCamionDTO)
                 .collect(Collectors.toList());
     }
+
+
+    @PostMapping("/camiones")
+    public CamionDTO crearCamion(@RequestBody CamionDTO dto) {
+        Camion camion = flotaService.registrarCamion(flotaMapper.toCamionEntity(dto));
+        return flotaMapper.toCamionDTO(camion);
+    }
+
+    @PutMapping("/camiones/{dominio}")
+    public ResponseEntity<CamionDTO> actualizarCamion(
+            @PathVariable String dominio,
+            @RequestBody CamionDTO dto) {
+
+        Camion camionActualizado = flotaService.actualizarCamion(dominio, dto);
+        return ResponseEntity.ok(flotaMapper.toCamionDTO(camionActualizado));
+    }
+
 
     // -------------------- TRANSPORTISTAS --------------------
     @GetMapping("/transportistas")
