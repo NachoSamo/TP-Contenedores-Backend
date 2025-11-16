@@ -9,4 +9,11 @@ import java.util.List;
 @Repository
 public interface ContenedorRepository extends JpaRepository<Contenedor, Integer> {
     List<Contenedor> findByEstado_DescripcionIgnoreCase(String descripcion);
+
+    List<Contenedor> findByCliente_DniCliente(Integer dniCliente);
+
+    List<Contenedor> findByCliente_DniClienteAndEstado_DescripcionIgnoreCase(
+            Integer dniCliente,
+            String descripcionEstado
+    );
 }

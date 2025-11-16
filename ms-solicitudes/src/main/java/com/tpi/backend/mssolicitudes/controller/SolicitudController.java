@@ -64,11 +64,25 @@ public class SolicitudController {
 
     // -------- CONTENEDORES --------
     @GetMapping("/contenedores")
-    public List<ContenedorDTO> listarContenedores(@RequestParam(required = false) String estado) {
+    public List<ContenedorDTO> listarContenedores(@RequestParam(required = false) String estado,
+                                                  @RequestParam(required = false) Integer dniCliente) {
 
-        var contenedores = (estado != null && !estado.isBlank())
-                ? solicitudService.listarContenedoresPorEstadoNombre(estado)
-                : solicitudService.listarContenedores();
+        List<Contenedor> contenedores;
+        if (dniCliente != null && estado != null && !estado.isBlank()) {
+            contenedores = solicitudService
+                    .listarContenedoresPorDniYEstado(dniCliente, estado);
+
+        } else if (dniCliente != null) {
+            contenedores = solicitudService
+                    .listarContenedoresPorDniCliente(dniCliente);
+
+        } else if (estado != null && !estado.isBlank()) {
+            contenedores = solicitudService
+                    .listarContenedoresPorEstadoNombre(estado);
+
+        } else {
+            contenedores = solicitudService.listarContenedores();
+        }
 
         return contenedores.stream()
                 .map(mapper::toContenedorDTO)

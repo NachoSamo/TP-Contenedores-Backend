@@ -173,6 +173,15 @@ public class SolicitudService {
         return contenedorRepository.findByEstado_DescripcionIgnoreCase(nombreEstado);
     }
 
+    public List<Contenedor> listarContenedoresPorDniCliente(Integer dniCliente) {
+        return contenedorRepository.findByCliente_DniCliente(dniCliente);
+    }
+
+    public List<Contenedor> listarContenedoresPorDniYEstado(Integer dniCliente, String nombreEstado) {
+        return contenedorRepository
+                .findByCliente_DniClienteAndEstado_DescripcionIgnoreCase(dniCliente, nombreEstado);
+    }
+
     public Contenedor crearContenedor(Contenedor contenedor) {
         try {
             if (contenedor.getPesoKg() == null || contenedor.getPesoKg() <= 0) {
