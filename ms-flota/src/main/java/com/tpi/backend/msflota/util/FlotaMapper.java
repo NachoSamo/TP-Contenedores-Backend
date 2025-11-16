@@ -70,31 +70,41 @@ public class FlotaMapper {
 
     // ---------- TRANSPORTISTA ----------
     public TransportistaDTO toTransportistaDTO(Transportista e) {
+        if (e == null) {
+            return null;
+        }
+
         TransportistaDTO dto = new TransportistaDTO();
         dto.setIdTransportista(e.getIdTransportista());
         dto.setNombre(e.getNombre());
         dto.setApellido(e.getApellido());
         dto.setDni(e.getDni());
         dto.setTelefono(e.getTelefono());
-        // La entidad Transportista en common-data no contiene 'licencia' ni 'estado'
-        dto.setLicencia(null);
-        // Mapear 'activo' booleano a estado String
-        Boolean activo = e.getActivo();
-        dto.setEstado(activo != null && activo ? "activo" : "inactivo");
+        dto.setEmail(e.getEmail());
+        dto.setFechaNacimiento(e.getFechaNacimiento());
+        dto.setActivo(Boolean.TRUE.equals(e.getActivo()));
+
         return dto;
     }
 
     public Transportista toTransportistaEntity(TransportistaDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
         Transportista e = new Transportista();
         e.setIdTransportista(dto.getIdTransportista());
         e.setNombre(dto.getNombre());
         e.setApellido(dto.getApellido());
         e.setDni(dto.getDni());
         e.setTelefono(dto.getTelefono());
-        // No existe campo 'licencia' en la entidad común; dejamos email/fechaNacimiento/activo sin setear
-        e.setActivo(dto.getEstado() != null && dto.getEstado().equalsIgnoreCase("activo"));
+        e.setEmail(dto.getEmail());
+        e.setFechaNacimiento(dto.getFechaNacimiento());
+        e.setActivo(dto.isActivo()); // boolean -> Boolean (autoboxing)
+
         return e;
     }
+
 
     // ---------- TARIFA ----------
     public TarifaDTO toTarifaDTO(Tarifa e) {

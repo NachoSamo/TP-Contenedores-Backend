@@ -1,6 +1,7 @@
 package com.tpi.backend.msflota.dto;
 
 import lombok.Data;
+import java.time.LocalDate;
 
 @Data
 public class TransportistaDTO {
@@ -9,6 +10,7 @@ public class TransportistaDTO {
     private String apellido;
     private String dni;
     private String telefono;
-    private String licencia;
-    private String estado;
+    private String email;
+    private LocalDate fechaNacimiento;
+    private boolean activo;
 }
