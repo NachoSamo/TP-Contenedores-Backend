@@ -89,6 +89,14 @@ public class SolicitudController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/contenedores/{idContenedor}/estado")
+    public ResponseEntity<EstadoDTO> obtenerEstadoContenedor(
+            @PathVariable Integer idContenedor) {
+
+        var estadoDTO = solicitudService.obtenerEstadoActualDeContenedor(idContenedor);
+        return ResponseEntity.ok(estadoDTO);
+    }
+
     @PostMapping("/contenedores")
     public ContenedorDTO crearContenedor(@RequestBody ContenedorDTO dto) {
         Contenedor contenedor = solicitudService.crearContenedor(mapper.toContenedorEntity(dto));

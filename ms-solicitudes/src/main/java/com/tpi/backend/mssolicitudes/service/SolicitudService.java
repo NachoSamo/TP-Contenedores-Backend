@@ -1,20 +1,15 @@
 package com.tpi.backend.mssolicitudes.service;
 
-import com.tpi.backend.mssolicitudes.dto.SolicitudDTO;
-import entities.Solicitud;
-import entities.Cliente;
-import entities.Contenedor;
-import entities.Estado;
+import com.tpi.backend.mssolicitudes.dto.*;
+import entities.*;
 import com.tpi.backend.mssolicitudes.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 
 import com.tpi.backend.mssolicitudes.client.FlotaClient;
 import com.tpi.backend.mssolicitudes.client.RutasClient;
-import com.tpi.backend.mssolicitudes.dto.TarifaSolicitudDTO;
-import com.tpi.backend.mssolicitudes.dto.CamionFlotaDTO;
-import com.tpi.backend.mssolicitudes.dto.DistanciaDTO;
 
 
 @Service
@@ -150,6 +145,7 @@ public class SolicitudService {
         return clienteRepository.findAll();
     }
 
+
     public Cliente crearCliente(Cliente cliente) {
 
         if (cliente.getDniCliente() == null) {
@@ -180,6 +176,40 @@ public class SolicitudService {
     public List<Contenedor> listarContenedoresPorDniYEstado(Integer dniCliente, String nombreEstado) {
         return contenedorRepository
                 .findByCliente_DniClienteAndEstado_DescripcionIgnoreCase(dniCliente, nombreEstado);
+    }
+
+
+    public EstadoDTO obtenerEstadoActualDeContenedor(Integer idContenedor) {
+
+        // 1) Buscar contenedor
+        Contenedor contenedor = contenedorRepository.findById(idContenedor)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No se encontró el contenedor con id " + idContenedor));
+
+        // 2) Obtener estado
+        Estado estado = contenedor.getEstado();
+
+        if (estado == null) {
+            throw new IllegalStateException(
+                    "El contenedor con id " + idContenedor + " no tiene un estado asignado");
+        }
+
+        // 3) Validar contexto = CONTENEDOR (usando el enum)
+        Contexto contexto = estado.getContexto();
+
+        if (contexto == null || contexto != Contexto.CONTENEDOR) {
+            throw new IllegalStateException(
+                    "El estado asociado al contenedor con id " + idContenedor +
+                            " no corresponde al contexto CONTENEDOR (contexto actual: " + contexto + ")");
+        }
+
+        // 4) Mapear a EstadoDTO
+        EstadoDTO dto = new EstadoDTO();
+        dto.setIdEstado(estado.getIdEstado());
+        dto.setContexto(contexto.name());
+        dto.setDescripcion(estado.getDescripcion());
+
+        return dto;
     }
 
     public Contenedor crearContenedor(Contenedor contenedor) {
