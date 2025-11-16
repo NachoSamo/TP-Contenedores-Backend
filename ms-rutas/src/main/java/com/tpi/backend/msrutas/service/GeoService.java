@@ -66,6 +66,9 @@ public class GeoService {
             dto.setDestino(destino);
             dto.setKilometros(leg.path("distance").path("value").asDouble() / 1000);
             dto.setDuracionTexto(leg.path("duration").path("text").asText());
+            long duracionSegundos = leg.path("duration").path("value").asLong();
+            long duracionMinutos = duracionSegundos / 60;
+            dto.setDuracionMinutos(duracionMinutos);
 
             return dto;
         } catch (JsonProcessingException e) {

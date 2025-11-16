@@ -6,18 +6,13 @@ import com.tpi.backend.msflota.util.FlotaMapper;
 import entities.Camion;
 import entities.Tarifa;
 import entities.Transportista;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.*;
 
 
-/**
- * Controlador REST del microservicio de flota.
- * Expone endpoints para gestionar camiones, transportistas y tarifas.
- */
+
 @RestController
 @RequestMapping("/")
 public class FlotaController {

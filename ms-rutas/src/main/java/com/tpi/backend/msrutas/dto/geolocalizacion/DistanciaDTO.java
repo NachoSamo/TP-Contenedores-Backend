@@ -8,4 +8,5 @@ public class DistanciaDTO {
     private String destino;
     private double kilometros;
     private String duracionTexto;
+    private long duracionMinutos;
 }

@@ -24,8 +24,8 @@ public class RutaController {
 
     // -------- RUTAS --------
     @GetMapping
-    public List<RutaDTO> listarRutas() {
-        return rutaService.listarRutas()
+    public List<RutaDTO> listarRutas(@RequestParam(name = "idRuta", required = false) Integer idRuta) {
+        return rutaService.listarRutas(idRuta)
                 .stream()
                 .map(mapper::toRutaDTO)
                 .collect(Collectors.toList());
@@ -48,8 +48,9 @@ public class RutaController {
 
     @PostMapping("/tramos")
     public TramoDTO crearTramo(@RequestBody TramoDTO dto) {
-        Tramo tramo = rutaService.crearTramo(mapper.toTramoEntity(dto));
-        return mapper.toTramoDTO(tramo);
+        Tramo tramo = mapper.toTramoEntity(dto);
+        Tramo creado = rutaService.crearTramo(tramo);
+        return mapper.toTramoDTO(creado);
     }
 
     // -------- DEPOSITOS --------

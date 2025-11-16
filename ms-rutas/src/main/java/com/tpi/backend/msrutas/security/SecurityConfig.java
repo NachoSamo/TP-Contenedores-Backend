@@ -18,10 +18,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         // ADMINS pueden crear rutas, tramos y depósitos
-                        .requestMatchers(HttpMethod.POST, "/api/rutas", "/api/rutas/tramos", "/api/rutas/depositos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/", "/tramos", "/depositos").hasRole("ADMIN")
 
                         // USERS pueden listar toda la información de rutas
-                        .requestMatchers(HttpMethod.GET, "/api/rutas/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/**").hasAnyRole("USER", "ADMIN")
 
                         // Cualquier otra petición debe estar autenticada
                         .anyRequest().authenticated()
