@@ -1,10 +1,12 @@
 package com.tpi.backend.msrutas.service;
 
+
 import com.tpi.backend.msrutas.client.TarifaClient;
 import com.tpi.backend.msrutas.dto.TarifaDTO;
 import com.tpi.backend.msrutas.dto.geolocalizacion.DistanciaDTO;
 import com.tpi.backend.msrutas.repository.*;
 import entities.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,10 +26,10 @@ public class RutaService {
     private final TarifaClient tarifaClient;
     //private final GeoMapsClient geoMapsClient;
 
+
     public RutaService(RutaRepository rutaRepository, GeolocalizacionRepository geolocalizacionRepository, TipoTramoRepository tipoTramoRepository, EstadoRepository estadoRepository, CamionRepository camionRepository,
-                       TramoRepository tramoRepository,
-                       DepositoRepository depositoRepository, GeoService geoService, TarifaClient tarifaClient
-            /*,GeoMapsClient geoMapsClient*/) {
+                       TramoRepository tramoRepository, DepositoRepository depositoRepository, GeoService geoService, TarifaClient tarifaClient) {
+
         this.rutaRepository = rutaRepository;
         this.geolocalizacionRepository = geolocalizacionRepository;
         this.tipoTramoRepository = tipoTramoRepository;
@@ -52,11 +54,16 @@ public class RutaService {
     }
 
     public Ruta crearRuta(Ruta ruta) {
+        if (ruta.getSolicitud().getNroSolicitud() == null) {
+            throw new IllegalArgumentException("El número de solicitud (nroSolicitud) es obligatorio para crear una ruta.");
+        }
         return rutaRepository.save(ruta);
     }
 
-    // -------- TRAMOS --------
     public List<Tramo> listarTramosPorRuta(Integer idRuta) {
+        if (!rutaRepository.existsById(idRuta)) {
+            throw new EntityNotFoundException("No se encontró la ruta con ID: " + idRuta);
+        }
         return tramoRepository.findByRuta_IdRuta(idRuta);
     }
 
@@ -300,11 +307,16 @@ public class RutaService {
 
 
     // -------- DEPOSITOS --------
+
     public List<Deposito> listarDepositos() {
         return depositoRepository.findAll();
     }
 
     public Deposito crearDeposito(Deposito deposito) {
+        if (deposito.getNombre() == null || deposito.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre del depósito es obligatorio.");
+        }
+
         return depositoRepository.save(deposito);
     }
 }

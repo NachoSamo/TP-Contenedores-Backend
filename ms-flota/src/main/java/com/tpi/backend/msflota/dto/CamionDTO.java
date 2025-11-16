@@ -8,9 +8,9 @@ public class CamionDTO {
     private String modelo;
     private Float capacidadKg;
     private Float volumenM3;
-    private boolean disponibilidad;
-    private float consumoPromKm;
-    private float costoTraslado;
-    private Integer idTransportista; // referencia, no objeto completo
+    private Boolean disponibilidad;
+    private Float consumoPromKm;
+    private Float costoTraslado;
+    private Integer idTransportista;
 }
 

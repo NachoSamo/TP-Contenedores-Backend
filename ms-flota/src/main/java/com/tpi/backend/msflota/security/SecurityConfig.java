@@ -17,15 +17,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // ADMINS pueden crear entidades (camiones, transportistas, tarifas)
-                        .requestMatchers(HttpMethod.POST, "/api/flota/camiones", "/api/flota/transportistas", "/api/flota/tarifas").hasRole("ADMIN")
+                        // OPERADOR puede gestionar (crear y actualizar) todos los recursos de esta API.
+                        .requestMatchers(HttpMethod.POST, "/**").hasRole("OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/**").hasRole("OPERADOR")
 
-                        .requestMatchers(HttpMethod.PUT, "/api/flota/camiones/**").hasRole("ADMIN")
+                        // TODOS los roles autenticados pueden consultar la información.
+                        .requestMatchers(HttpMethod.GET, "/**").authenticated()
 
-                        // USERS pueden listar todo y realizar cálculos
-                        .requestMatchers(HttpMethod.GET, "/api/flota/**").hasAnyRole("USER", "ADMIN")
-
-                        // Cualquier otra petición debe estar autenticada
+                        // Cualquier otra petición no definida debe estar autenticada.
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

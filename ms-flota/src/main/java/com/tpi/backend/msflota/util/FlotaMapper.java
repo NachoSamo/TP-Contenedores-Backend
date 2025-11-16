@@ -13,36 +13,20 @@ public class FlotaMapper {
 
     // ---------- CAMION ----------
     public CamionDTO toCamionDTO(Camion e) {
+        if (e == null) return null;
         CamionDTO dto = new CamionDTO();
-
-        // ID / dominio
         dto.setDominioCamion(e.getDominioCamion());
-
-        // En la entidad no hay 'modelo' (lo dejamos null por ahora)
-        dto.setModelo(null);
-
-        // Capacidades
         dto.setCapacidadKg(e.getCapacidadPesoMax());
         dto.setVolumenM3(e.getCapacidadVolumenMax());
+        dto.setDisponibilidad(e.getDisponibilidad());
+        dto.setConsumoPromKm(e.getConsumoPromKm());
+        dto.setCostoTraslado(e.getCostoTraslado());
 
-        // Disponibilidad y estado
-        Boolean disp = e.getDisponibilidad();
-        boolean disponible = disp != null && disp;
-        dto.setDisponibilidad(disponible);
-
-        // Consumo y costo
-        dto.setConsumoPromKm(
-                e.getConsumoPromKm() != null ? e.getConsumoPromKm() : 0f
-        );
-        dto.setCostoTraslado(
-                e.getCostoTraslado() != null ? e.getCostoTraslado() : 0f
-        );
-
-        // Transportista (solo id)
+        // ESTA ES LA CORRECCIÓN CLAVE
         if (e.getTransportista() != null) {
             dto.setIdTransportista(e.getTransportista().getIdTransportista());
         } else {
-            dto.setIdTransportista(null);
+            dto.setIdTransportista(null); // Explícitamente nulo si no hay transportista
         }
 
         return dto;
@@ -59,7 +43,7 @@ public class FlotaMapper {
         e.setCapacidadVolumenMax(dto.getVolumenM3());
         e.setConsumoPromKm(dto.getConsumoPromKm());
         e.setCostoTraslado(dto.getCostoTraslado());
-        e.setDisponibilidad(dto.isDisponibilidad());
+        e.setDisponibilidad(dto.getDisponibilidad());
 
         // Transportista:
         e.setTransportista(null);
