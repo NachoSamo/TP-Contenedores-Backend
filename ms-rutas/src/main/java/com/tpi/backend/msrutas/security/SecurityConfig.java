@@ -11,19 +11,19 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // ADMINS pueden crear rutas, tramos y depósitos
-                        .requestMatchers(HttpMethod.POST, "/api/rutas", "/api/rutas/tramos", "/api/rutas/depositos").hasRole("ADMIN")
+                        // OPERADOR es el único que puede crear (POST) rutas, tramos y depósitos.
+                        .requestMatchers(HttpMethod.POST, "/**").hasRole("OPERADOR")
 
-                        // USERS pueden listar toda la información de rutas
-                        .requestMatchers(HttpMethod.GET, "/api/rutas/**").hasAnyRole("USER", "ADMIN")
+                        // OPERADOR y TRANSPORTISTA pueden consultar toda la información de rutas.
+                        .requestMatchers(HttpMethod.GET, "/**").hasAnyRole("OPERADOR", "TRANSPORTISTA")
 
-                        // Cualquier otra petición debe estar autenticada
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
