@@ -22,6 +22,15 @@ public class SecurityConfig {
                         // OPERADOR es el único que puede crear (POST) rutas, tramos y depósitos.
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("OPERADOR")
 
+                        .requestMatchers(HttpMethod.PUT, "/tramos/*/camion")
+                        .hasAnyRole("OPERADOR", "ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/tramos/*/inicio")
+                        .hasAnyRole("OPERADOR", "TRANSPORTISTA")
+
+                        .requestMatchers(HttpMethod.PUT, "/tramos/*/fin")
+                        .hasAnyRole("OPERADOR", "TRANSPORTISTA")
+
                         // OPERADOR y TRANSPORTISTA pueden consultar toda la información de rutas.
                         .requestMatchers(HttpMethod.GET, "/**").hasAnyRole("OPERADOR", "TRANSPORTISTA")
 

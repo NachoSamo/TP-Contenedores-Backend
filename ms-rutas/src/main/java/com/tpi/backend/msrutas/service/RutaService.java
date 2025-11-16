@@ -305,6 +305,91 @@ public class RutaService {
         }
     }
 
+    public Tramo asignarCamionATramo(Integer idTramo, String dominioCamion) {
+
+        // 1) Buscar tramo
+        Tramo tramo = tramoRepository.findById(idTramo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe tramo con id " + idTramo
+                ));
+
+        // 2) Validar dominio
+        if (dominioCamion == null || dominioCamion.isBlank()) {
+            throw new IllegalArgumentException("El dominioCamion es obligatorio.");
+        }
+
+        // 3) Buscar camión
+        Camion camion = camionRepository.findById(dominioCamion)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe camión con dominio " + dominioCamion
+                ));
+
+        // 4) Validar disponibilidad (opcional)
+        if (Boolean.FALSE.equals(camion.getDisponibilidad())) {
+            throw new IllegalStateException(
+                    "El camión " + dominioCamion + " no está disponible."
+            );
+        }
+
+        // 5) Asignar camión al tramo
+        tramo.setCamion(camion);
+
+        // 6) Recalcular costo aproximado con tu misma lógica
+        if (tramo.getOrigenGeo() != null && tramo.getDestinoGeo() != null) {
+            DistanciaDTO dist = calcularDistanciaEntre(
+                    tramo.getOrigenGeo(),
+                    tramo.getDestinoGeo()
+            );
+
+            Float costoAproximado = calcularCostoAproximado(camion, dist);
+            tramo.setCostoAproximado(costoAproximado);
+        }
+
+        return tramoRepository.save(tramo);
+    }
+
+
+    public Tramo registrarInicioTramo(Integer idTramo, LocalDateTime fechaHoraInicioReal) {
+        Tramo tramo = tramoRepository.findById(idTramo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe tramo con id " + idTramo
+                ));
+
+        LocalDateTime inicioReal = (fechaHoraInicioReal != null)
+                ? fechaHoraInicioReal
+                : LocalDateTime.now();
+
+        tramo.setFechaHoraInicioReal(inicioReal);
+
+        // (Opcional) cambiar estado a "EN_CURSO" si tenés ese estado
+        return tramoRepository.save(tramo);
+    }
+
+    public Tramo registrarFinTramo(Integer idTramo, LocalDateTime fechaHoraFinReal) {
+        Tramo tramo = tramoRepository.findById(idTramo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe tramo con id " + idTramo
+                ));
+
+        LocalDateTime finReal = (fechaHoraFinReal != null)
+                ? fechaHoraFinReal
+                : LocalDateTime.now();
+
+        // (Opcional) validación orden lógico
+        if (tramo.getFechaHoraInicioReal() != null &&
+                finReal.isBefore(tramo.getFechaHoraInicioReal())) {
+            throw new IllegalArgumentException(
+                    "La fechaHoraFinReal no puede ser anterior a fechaHoraInicioReal."
+            );
+        }
+
+        tramo.setFechaHoraFinReal(finReal);
+
+        // (Opcional) cambiar estado a "FINALIZADO" si tenés ese estado
+        return tramoRepository.save(tramo);
+    }
+
+
 
     // -------- DEPOSITOS --------
 

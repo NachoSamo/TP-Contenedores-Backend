@@ -1,9 +1,6 @@
 package com.tpi.backend.msrutas.controller;
 
-import com.tpi.backend.msrutas.dto.ErrorResponseDTO;
-import com.tpi.backend.msrutas.dto.RutaDTO;
-import com.tpi.backend.msrutas.dto.TramoDTO;
-import com.tpi.backend.msrutas.dto.DepositoDTO;
+import com.tpi.backend.msrutas.dto.*;
 import com.tpi.backend.msrutas.service.RutaService;
 import com.tpi.backend.msrutas.util.RutaMapper;
 import entities.Ruta;
@@ -71,6 +68,42 @@ public class RutaController {
         Tramo creado = rutaService.crearTramo(tramo);
         return mapper.toTramoDTO(creado);
     }
+
+    @PutMapping("/tramos/{idTramo}/camion")
+    public TramoDTO asignarCamionATramo(
+            @PathVariable Integer idTramo,
+            @RequestBody AsignarCamionDTO dto
+    ) {
+        Tramo tramoActualizado = rutaService.asignarCamionATramo(idTramo, dto.getDominioCamion());
+        return mapper.toTramoDTO(tramoActualizado);
+    }
+
+
+    @PutMapping("/tramos/{idTramo}/inicio")
+    public TramoDTO registrarInicioTramo(
+            @PathVariable Integer idTramo,
+            @RequestBody TiemposTramoDTO dto
+    ) {
+        Tramo tramoActualizado = rutaService.registrarInicioTramo(
+                idTramo,
+                dto.getFechaHoraInicioReal()
+        );
+        return mapper.toTramoDTO(tramoActualizado);
+    }
+
+
+    @PutMapping("/tramos/{idTramo}/fin")
+    public TramoDTO registrarFinTramo(
+            @PathVariable Integer idTramo,
+            @RequestBody TiemposTramoDTO dto
+    ) {
+        Tramo tramoActualizado = rutaService.registrarFinTramo(
+                idTramo,
+                dto.getFechaHoraFinReal()
+        );
+        return mapper.toTramoDTO(tramoActualizado);
+    }
+
 
     @GetMapping("/depositos")
     public List<DepositoDTO> listarDepositos() {
