@@ -33,6 +33,57 @@ public class SolicitudService {
     }
 
     public Solicitud crearSolicitud(Solicitud solicitud) {
+        // 1) Validar el cliente registrado
+        if (solicitud.getCliente() == null || solicitud.getCliente().getDniCliente() == null) {
+            throw new IllegalArgumentException("El dni_cliente es obligatorio.");
+        }
+
+        Integer dniCliente = solicitud.getCliente().getDniCliente();
+
+        // 1) El dni_cliente debe existir como cliente registrado
+        var cliente = clienteRepository.findById(dniCliente)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("No existe un cliente registrado con DNI " + dniCliente));
+
+        // 2) Validar el contenedor y su id
+        if (solicitud.getContenedor() == null || solicitud.getContenedor().getIdContenedor() == null) {
+            throw new IllegalArgumentException("El id_contenedor es obligatorio.");
+        }
+
+        Integer idContenedor = solicitud.getContenedor().getIdContenedor();
+
+        // 2) El id_contenedor debe existir
+        var contenedor = contenedorRepository.findById(idContenedor)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("No existe un contenedor con id " + idContenedor));
+
+        // 3) El contenedor debe pertenecer al cliente indicado
+        if (contenedor.getCliente() == null ||
+                contenedor.getCliente().getDniCliente() == null ||
+                !contenedor.getCliente().getDniCliente().equals(dniCliente)) {
+
+            throw new IllegalArgumentException(
+                    "El contenedor " + idContenedor + " no pertenece al cliente con DNI " + dniCliente
+            );
+        }
+
+        // 4) El contenedor no debe estar actualmente asociado a otra solicitud activa
+        List<String> estadosBloqueantes = List.of("ACTIVA", "ACT");
+
+        boolean existeSolicitudActiva = solicitudRepository
+                .existsByContenedor_IdContenedorAndEstado_DescripcionIn(idContenedor, estadosBloqueantes);
+
+        if (existeSolicitudActiva) {
+            throw new IllegalArgumentException(
+                    "El contenedor " + idContenedor + " ya está asociado a una solicitud activa."
+            );
+        }
+
+
+        solicitud.setCliente(cliente);
+        solicitud.setContenedor(contenedor);
+
+
         return solicitudRepository.save(solicitud);
     }
 
@@ -78,11 +129,20 @@ public class SolicitudService {
         if (dni != null) {
             return clienteRepository.findByDniCliente(dni);
         }
-        System.out.println(">>> [SERVICE] Ejecutando findAll");
         return clienteRepository.findAll();
     }
 
     public Cliente crearCliente(Cliente cliente) {
+
+        if (cliente.getDniCliente() == null) {
+            throw new IllegalArgumentException("El DNI del cliente es obligatorio");
+        }
+
+        if (clienteRepository.existsByDniCliente(cliente.getDniCliente())) {
+            throw new IllegalArgumentException(
+                    "Ya existe un cliente registrado con el DNI " + cliente.getDniCliente()
+            );
+        }
         return clienteRepository.save(cliente);
     }
 
@@ -97,16 +157,11 @@ public class SolicitudService {
 
     public Contenedor crearContenedor(Contenedor contenedor) {
         try {
-            System.out.println(">>> VALIDANDO CONTENEDOR: peso=" + contenedor.getPesoKg()
-                    + ", volumen=" + contenedor.getVolumenM3());
-
             if (contenedor.getPesoKg() == null || contenedor.getPesoKg() <= 0) {
-                System.out.println(">>> PESO INVALIDO, LANZANDO EXCEPCION");
                 throw new IllegalArgumentException("El peso (kg) debe ser mayor que 0");
             }
 
             if (contenedor.getVolumenM3() == null || contenedor.getVolumenM3() <= 0) {
-                System.out.println(">>> VOLUMEN INVALIDO, LANZANDO EXCEPCION");
                 throw new IllegalArgumentException("El volumen (m3) debe ser mayor que 0");
             }
 

@@ -49,7 +49,6 @@ public class SolicitudController {
     // -------- CLIENTES --------
     @GetMapping("/clientes")
     public List<ClienteDTO> listarClientes(@RequestParam(required = false) Integer dni) {
-        System.out.println(">>> DNI recibido: " + dni);
 
         return solicitudService.listarClientes(dni)
                 .stream()

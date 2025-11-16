@@ -12,9 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     List<Cliente> findByDniCliente(Integer dniCliente);
-    /*@Query(
-            value = "SELECT * FROM clientes c WHERE c.dni_cliente = :dni",
-            nativeQuery = true
-    )
-    List<Cliente> buscarPorDni(@Param("dni") Integer dni);*/
+
+    boolean existsByDniCliente(Integer dniCliente);
 }
