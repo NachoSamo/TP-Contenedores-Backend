@@ -1,7 +1,6 @@
 package com.tpi.backend.msflota.service;
 
 import com.tpi.backend.msflota.dto.CamionDTO;
-import com.tpi.backend.msflota.util.FlotaMapper;
 import entities.Camion;
 import entities.Tarifa;
 import entities.Transportista;
@@ -10,7 +9,6 @@ import com.tpi.backend.msflota.repository.TarifaRepository;
 import com.tpi.backend.msflota.repository.TransportistaRepository;
 import jakarta.persistence.EntityExistsException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -161,16 +159,74 @@ public class FlotaService {
         return transportistaRepository.findAll();
     }
 
-    public Transportista crearTransportista(Transportista transportista) {
+    public Transportista registrarTransportista(Transportista transportista) {
+
+        if (transportista.getNombre() == null || transportista.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre del transportista es obligatorio.");
+        }
+
+        if (transportista.getApellido() == null || transportista.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido del transportista es obligatorio.");
+        }
+
+        if (transportista.getDni() == null || transportista.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI del transportista es obligatorio.");
+        }
+
+        // 2) El DNI no debe existir previamente
+        boolean existeDni = transportistaRepository.existsByDni(transportista.getDni());
+        if (existeDni) {
+            throw new IllegalArgumentException(
+                    "Ya existe un transportista registrado con DNI " + transportista.getDni()
+            );
+        }
+
+        if (transportista.getActivo() == null) {
+            transportista.setActivo(Boolean.TRUE);
+        }
+
+        // 6) Persistir transportista
         return transportistaRepository.save(transportista);
     }
 
+
     // -------- TARIFAS --------
-    public List<Tarifa> listarTarifas() {
-        return tarifaRepository.findAll();
+    public List<Tarifa> listarTarifas(String dominioCamion) {
+        boolean tieneDominio = dominioCamion != null && !dominioCamion.isBlank();
+
+        if (tieneDominio) {
+            return tarifaRepository
+                    .findByCamion_DominioCamionContainingIgnoreCase(dominioCamion);
+        } else {
+            return tarifaRepository.findAll();
+        }
     }
 
-    public Tarifa crearTarifa(Tarifa tarifa) {
+    public Tarifa registrarTarifa(Tarifa tarifa, String dominioCamion) {
+        if (tarifa.getTipoTarifa() == null || tarifa.getTipoTarifa().isBlank()) {
+            throw new IllegalArgumentException("El tipoTarifa es obligatorio.");
+        }
+
+        if (tarifa.getCostoLitroCombustible() == null || tarifa.getCostoLitroCombustible() <= 0) {
+            throw new IllegalArgumentException("El costoLitroCombustible debe ser mayor a 0.");
+        }
+
+        if (tarifa.getCargoGestionTramo() == null || tarifa.getCargoGestionTramo() < 0) {
+            throw new IllegalArgumentException("El cargoGestionTramo no puede ser negativo.");
+        }
+
+        if (dominioCamion == null || dominioCamion.isBlank()) {
+            throw new IllegalArgumentException("El dominioCamion es obligatorio.");
+        }
+
+        Camion camion = camionRepository.findById(dominioCamion)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe un camión registrado con dominio " + dominioCamion
+                ));
+
+        tarifa.setCamion(camion);
+
+        tarifa.setIdTarifa(null);
         return tarifaRepository.save(tarifa);
     }
 }

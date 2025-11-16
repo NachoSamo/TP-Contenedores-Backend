@@ -3,7 +3,9 @@ package com.tpi.backend.msflota.repository;
 import entities.Tarifa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface TarifaRepository extends JpaRepository<Tarifa, Integer> {
-    // Buscar tarifa por su tipo tal como está en la entidad (tipoTarifa)
+    List<Tarifa> findByCamion_DominioCamionContainingIgnoreCase(String dominioCamion);
     Tarifa findByTipoTarifa(String tipoTarifa);
 }

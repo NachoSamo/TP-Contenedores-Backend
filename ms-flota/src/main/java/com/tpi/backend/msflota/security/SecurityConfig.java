@@ -20,6 +20,8 @@ public class SecurityConfig {
                         // ADMINS pueden crear entidades (camiones, transportistas, tarifas)
                         .requestMatchers(HttpMethod.POST, "/api/flota/camiones", "/api/flota/transportistas", "/api/flota/tarifas").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.PUT, "/api/flota/camiones/**").hasRole("ADMIN")
+
                         // USERS pueden listar todo y realizar cálculos
                         .requestMatchers(HttpMethod.GET, "/api/flota/**").hasAnyRole("USER", "ADMIN")
 

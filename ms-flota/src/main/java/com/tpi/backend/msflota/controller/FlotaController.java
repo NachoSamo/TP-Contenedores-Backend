@@ -4,6 +4,8 @@ import com.tpi.backend.msflota.dto.*;
 import com.tpi.backend.msflota.service.FlotaService;
 import com.tpi.backend.msflota.util.FlotaMapper;
 import entities.Camion;
+import entities.Tarifa;
+import entities.Transportista;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +32,8 @@ public class FlotaController {
 
     // -------------------- CAMIONES --------------------
     @GetMapping("/camiones")
-    public List<CamionDTO> listarCamiones(@RequestParam(required = false) String dominioCamion,
-                                          @RequestParam(required = false) Boolean disponibilidad) {
+    public List<CamionDTO> listarCamiones(@RequestParam(name = "dominioCamion", required = false) String dominioCamion,
+                                          @RequestParam(name = "disponibilidad", required = false) Boolean disponibilidad) {
         List<Camion> camiones = flotaService.obtenerCamiones(dominioCamion, disponibilidad);
         return camiones.stream()
                 .map(flotaMapper::toCamionDTO)
@@ -55,7 +57,7 @@ public class FlotaController {
 
     @PutMapping("/camiones/{dominio}")
     public ResponseEntity<CamionDTO> actualizarCamion(
-            @PathVariable String dominio,
+            @PathVariable("dominio") String dominio,
             @RequestBody CamionDTO dto) {
 
         Camion camionActualizado = flotaService.actualizarCamion(dominio, dto);
@@ -74,15 +76,17 @@ public class FlotaController {
 
     @PostMapping("/transportistas")
     public TransportistaDTO crearTransportista(@RequestBody TransportistaDTO dto) {
-        var entidad = flotaMapper.toTransportistaEntity(dto);
-        var nuevo = flotaService.crearTransportista(entidad);
-        return flotaMapper.toTransportistaDTO(nuevo);
+        Transportista transportista = flotaService.registrarTransportista(
+                flotaMapper.toTransportistaEntity(dto)
+        );
+        return flotaMapper.toTransportistaDTO(transportista);
     }
+
 
     // -------------------- TARIFAS --------------------
     @GetMapping("/tarifas")
-    public List<TarifaDTO> listarTarifas() {
-        return flotaService.listarTarifas()
+    public List<TarifaDTO> listarTarifas(@RequestParam(name = "dominioCamion", required = false) String dominioCamion) {
+        return flotaService.listarTarifas(dominioCamion)
                 .stream()
                 .map(flotaMapper::toTarifaDTO)
                 .collect(Collectors.toList());
@@ -90,10 +94,12 @@ public class FlotaController {
 
     @PostMapping("/tarifas")
     public TarifaDTO crearTarifa(@RequestBody TarifaDTO dto) {
-        var entidad = flotaMapper.toTarifaEntity(dto);
-        var nueva = flotaService.crearTarifa(entidad);
+        Tarifa tarifa = flotaMapper.toTarifaEntity(dto);
+        Tarifa nueva = flotaService.registrarTarifa(tarifa, dto.getDominioCamion());
         return flotaMapper.toTarifaDTO(nueva);
     }
+
+
 
     // -------------------- CÁLCULO DE COSTO --------------------
     /*@GetMapping("/tarifas/calcular")
