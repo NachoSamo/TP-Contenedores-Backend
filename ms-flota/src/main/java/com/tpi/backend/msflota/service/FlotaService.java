@@ -26,8 +26,28 @@ public class FlotaService {
     }
 
     // -------- CAMIONES --------
-    public List<Camion> obtenerCamiones() {
-        return camionRepository.findAll();
+    public List<Camion> obtenerCamiones(String dominioCamion, Boolean disponibilidad) {
+
+        boolean tieneDominio = dominioCamion != null && !dominioCamion.isBlank();
+        boolean tieneDisponibilidad = disponibilidad != null;
+
+        if (tieneDominio && tieneDisponibilidad) {
+            return camionRepository
+                    .findByDominioCamionContainingIgnoreCaseAndDisponibilidad(
+                            dominioCamion, disponibilidad
+                    );
+
+        } else if (tieneDominio) {
+            return camionRepository
+                    .findByDominioCamionContainingIgnoreCase(dominioCamion);
+
+        } else if (tieneDisponibilidad) {
+            return camionRepository
+                    .findByDisponibilidad(disponibilidad);
+
+        } else {
+            return camionRepository.findAll();
+        }
     }
 
     public Camion registrarCamion(Camion camion) {

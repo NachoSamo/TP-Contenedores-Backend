@@ -3,6 +3,7 @@ package com.tpi.backend.msflota.controller;
 import com.tpi.backend.msflota.dto.*;
 import com.tpi.backend.msflota.service.FlotaService;
 import com.tpi.backend.msflota.util.FlotaMapper;
+import entities.Camion;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,9 +28,10 @@ public class FlotaController {
 
     // -------------------- CAMIONES --------------------
     @GetMapping("/camiones")
-    public List<CamionDTO> listarCamiones() {
-        return flotaService.obtenerCamiones()
-                .stream()
+    public List<CamionDTO> listarCamiones(@RequestParam(required = false) String dominioCamion,
+                                          @RequestParam(required = false) Boolean disponibilidad) {
+        List<Camion> camiones = flotaService.obtenerCamiones(dominioCamion, disponibilidad);
+        return camiones.stream()
                 .map(flotaMapper::toCamionDTO)
                 .collect(Collectors.toList());
     }
@@ -82,10 +84,10 @@ public class FlotaController {
     }
 
     // -------------------- CÁLCULO DE COSTO --------------------
-    @GetMapping("/tarifas/calcular")
+    /*@GetMapping("/tarifas/calcular")
     public Double calcularCosto(@RequestParam String tipoContenedor,
                                 @RequestParam Double distancia,
                                 @RequestParam Double peso) {
         return flotaService.calcularCosto(tipoContenedor, distancia, peso);
-    }
+    }*/
 }

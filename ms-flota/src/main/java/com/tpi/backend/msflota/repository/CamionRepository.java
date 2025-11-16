@@ -6,7 +6,13 @@ import java.util.List;
 
 
 public interface CamionRepository extends JpaRepository<Camion, String> {
-    // Buscar por disponibilidad (boolean) en la entidad common-data
     List<Camion> findByDisponibilidad(Boolean disponibilidad);
+
+    List<Camion> findByDominioCamionContainingIgnoreCase(String dominioCamion);
+
+    List<Camion> findByDominioCamionContainingIgnoreCaseAndDisponibilidad(
+            String dominioCamion,
+            Boolean disponibilidad
+    );
 }
 
