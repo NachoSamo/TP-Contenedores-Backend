@@ -17,20 +17,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // ADMINS pueden crear datos maestros (clientes, contenedores, estados)
-                        .requestMatchers(HttpMethod.POST, "/api/solicitudes/clientes", "/api/solicitudes/contenedores", "/api/solicitudes/estados").hasRole("ADMIN")
+                        // Reglas para el ROL CLIENTE
+                        .requestMatchers(HttpMethod.POST, "/").hasRole("CLIENTE") // Crear solicitud
+                        .requestMatchers(HttpMethod.PUT, "/{nroSolicitud}").hasRole("CLIENTE") // Actualizar su solicitud
+                        .requestMatchers(HttpMethod.POST, "/solicitudes/{nroSolicitud}/tarifa").hasRole("CLIENTE") // Calcular su tarifa
+                        .requestMatchers(HttpMethod.GET, "/contenedores/{idContenedor}/estado").hasRole("CLIENTE") // Ver estado de su contenedor
 
-                        // USERS pueden crear una nueva solicitud de transporte
-                        .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("USER", "ADMIN")
+                        //Reglas para el ROL OPERADOR
+                        .requestMatchers(HttpMethod.POST, "/clientes", "/contenedores", "/estados").hasRole("OPERADOR") // Crear datos maestros
 
-                        //ADMINS pueden modificar la solicitud
-                        .requestMatchers(HttpMethod.PUT, "/api/solicitudes/**").hasRole("ADMIN")
+                        //Reglas de LECTURA
+                        // El CLIENTE y el OPERADOR pueden consultar la información.
+                        .requestMatchers(HttpMethod.GET, "/**").hasAnyRole("CLIENTE", "OPERADOR")
 
-
-                        // USERS pueden listar toda la información
-                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/**").hasAnyRole("USER", "ADMIN")
-
-                        // Cualquier otra petición debe estar autenticada
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

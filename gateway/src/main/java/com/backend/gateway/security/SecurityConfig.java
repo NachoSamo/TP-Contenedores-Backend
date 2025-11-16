@@ -8,7 +8,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@EnableWebFluxSecurity // ¡OJO! Spring Cloud Gateway es reactivo, usa esta anotación
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
