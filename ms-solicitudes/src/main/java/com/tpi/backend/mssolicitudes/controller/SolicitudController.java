@@ -23,8 +23,8 @@ public class SolicitudController {
 
     // -------- SOLICITUDES --------
     @GetMapping
-    public List<SolicitudDTO> listarSolicitudes() {
-        return solicitudService.listarSolicitudes()
+    public List<SolicitudDTO> listarSolicitudes( @RequestParam(required = false) Integer nroSolicitud) {
+        return solicitudService.listarSolicitudes(nroSolicitud)
                 .stream()
                 .map(mapper::toSolicitudDTO)
                 .collect(Collectors.toList());

@@ -12,4 +12,6 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             Integer idContenedor,
             List<String> descripcionesEstado
     );
+
+    List<Solicitud> findByNroSolicitud(Integer nroSolicitud);
 }

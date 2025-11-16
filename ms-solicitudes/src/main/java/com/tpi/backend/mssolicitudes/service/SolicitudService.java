@@ -28,7 +28,10 @@ public class SolicitudService {
     }
 
     // -------- SOLICITUDES --------
-    public List<Solicitud> listarSolicitudes() {
+    public List<Solicitud> listarSolicitudes(Integer nroSolicitud) {
+        if (nroSolicitud != null) {
+            return solicitudRepository.findByNroSolicitud(nroSolicitud);
+        }
         return solicitudRepository.findAll();
     }
 
