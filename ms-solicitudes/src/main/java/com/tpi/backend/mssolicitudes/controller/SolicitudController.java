@@ -95,4 +95,9 @@ public class SolicitudController {
         Estado estado = solicitudService.crearEstado(mapper.toEstadoEntity(dto));
         return mapper.toEstadoDTO(estado);
     }
+    // -------- TARIFAS --------
+    @PostMapping("/solicitudes/{nroSolicitud}/tarifa")
+    public TarifaSolicitudDTO calcularTarifa(@PathVariable Integer nroSolicitud) {
+        return solicitudService.calcularTarifaSolicitud(nroSolicitud);
+    }
 }
