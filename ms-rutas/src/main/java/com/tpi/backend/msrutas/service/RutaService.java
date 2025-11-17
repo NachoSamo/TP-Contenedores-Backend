@@ -2,6 +2,7 @@ package com.tpi.backend.msrutas.service;
 
 
 import com.tpi.backend.msrutas.client.TarifaClient;
+import com.tpi.backend.msrutas.dto.DistanciaTotalRutaDTO;
 import com.tpi.backend.msrutas.dto.TarifaDTO;
 import com.tpi.backend.msrutas.dto.geolocalizacion.DistanciaDTO;
 import com.tpi.backend.msrutas.repository.*;
@@ -389,6 +390,65 @@ public class RutaService {
         return tramoRepository.save(tramo);
     }
 
+    public DistanciaDTO obtenerDistanciaDeTramo(Integer idTramo) {
+        // 1) Buscar tramo
+        Tramo tramo = tramoRepository.findById(idTramo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe tramo con id " + idTramo
+                ));
+
+        // 2) Resolver origen y destino usando la misma lógica que en crearTramo
+        Geolocalizacion origen = resolverOrigen(tramo);
+        Geolocalizacion destino = resolverDestino(tramo);
+
+        // 3) Calcular distancia con Google Maps
+        return calcularDistanciaEntre(origen, destino);
+    }
+
+
+    public DistanciaTotalRutaDTO obtenerDistanciaTotalRuta(Integer idRuta) {
+
+        // 1) Validar que exista la ruta
+        Ruta ruta = rutaRepository.findById(idRuta)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe ruta con id " + idRuta
+                ));
+
+        // 2) Obtener tramos de la ruta
+        List<Tramo> tramos = tramoRepository.findByRuta_IdRuta(idRuta);
+
+        if (tramos.isEmpty()) {
+            DistanciaTotalRutaDTO dto = new DistanciaTotalRutaDTO();
+            dto.setIdRuta(idRuta);
+            dto.setCantidadTramos(0);
+            dto.setDistanciaTotalKm(0.0);
+            dto.setDuracionTotalMinutos(0L);
+            return dto;
+        }
+
+        double totalKm = 0.0;
+        long totalMin = 0L;
+
+        // 3) Para cada tramo, calculamos la distancia usando la misma lógica de antes
+        for (Tramo tramo : tramos) {
+            Geolocalizacion origen = resolverOrigen(tramo);
+            Geolocalizacion destino = resolverDestino(tramo);
+
+            DistanciaDTO dist = calcularDistanciaEntre(origen, destino);
+
+            totalKm += dist.getKilometros();
+            totalMin += dist.getDuracionMinutos();
+        }
+
+        // 4) Armar DTO de salida
+        DistanciaTotalRutaDTO dto = new DistanciaTotalRutaDTO();
+        dto.setIdRuta(idRuta);
+        dto.setCantidadTramos(tramos.size());
+        dto.setDistanciaTotalKm(totalKm);
+        dto.setDuracionTotalMinutos(totalMin);
+
+        return dto;
+    }
 
 
     // -------- DEPOSITOS --------

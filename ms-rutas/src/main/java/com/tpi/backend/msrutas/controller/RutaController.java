@@ -1,6 +1,7 @@
 package com.tpi.backend.msrutas.controller;
 
 import com.tpi.backend.msrutas.dto.*;
+import com.tpi.backend.msrutas.dto.geolocalizacion.DistanciaDTO;
 import com.tpi.backend.msrutas.service.RutaService;
 import com.tpi.backend.msrutas.util.RutaMapper;
 import entities.Ruta;
@@ -36,6 +37,11 @@ public class RutaController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/{idRuta}/distancia-total")
+    public DistanciaTotalRutaDTO obtenerDistanciaTotalRuta(@PathVariable Integer idRuta) {
+        return rutaService.obtenerDistanciaTotalRuta(idRuta);
+    }
+
     @PostMapping
     public ResponseEntity<?> crearRuta(@RequestBody RutaDTO dto, HttpServletRequest request) {
         try {
@@ -59,6 +65,11 @@ public class RutaController {
             ErrorResponseDTO error = new ErrorResponseDTO(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), "Not Found", e.getMessage(), request.getRequestURI());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
+    }
+
+    @GetMapping("/tramos/{idTramo}/distancia")
+    public DistanciaDTO obtenerDistanciaTramo(@PathVariable Integer idTramo) {
+        return rutaService.obtenerDistanciaDeTramo(idTramo);
     }
 
     @PostMapping("/tramos")
