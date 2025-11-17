@@ -17,7 +17,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
+
+
 
                         // OPERADOR es el único que puede crear (POST) rutas, tramos y depósitos.
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("OPERADOR")

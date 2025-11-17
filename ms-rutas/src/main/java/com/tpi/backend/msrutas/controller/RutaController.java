@@ -1,9 +1,6 @@
 package com.tpi.backend.msrutas.controller;
 
-import com.tpi.backend.msrutas.dto.ErrorResponseDTO;
-import com.tpi.backend.msrutas.dto.RutaDTO;
-import com.tpi.backend.msrutas.dto.TramoDTO;
-import com.tpi.backend.msrutas.dto.DepositoDTO;
+import com.tpi.backend.msrutas.dto.*;
 import com.tpi.backend.msrutas.service.RutaService;
 import com.tpi.backend.msrutas.util.RutaMapper;
 import entities.Ruta;
@@ -90,4 +87,13 @@ public class RutaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
+
+    @GetMapping("/alternativas")
+    public List<RutaAlternativaDTO> obtenerRutasAlternativas(
+            @RequestParam Integer origenGeoId,
+            @RequestParam Integer destinoGeoId
+    ) {
+        return rutaService.calcularRutasAlternativas(origenGeoId, destinoGeoId);
+    }
+
 }

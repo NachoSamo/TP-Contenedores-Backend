@@ -8,6 +8,7 @@ import com.tpi.backend.msrutas.repository.*;
 import entities.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import com.tpi.backend.msrutas.dto.RutaAlternativaDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +25,13 @@ public class RutaService {
     private final DepositoRepository depositoRepository;
     private final GeoService geoService;
     private final TarifaClient tarifaClient;
+    // Helper para comparar geolocalizaciones de forma sencilla
+    private boolean mismaGeo(Geolocalizacion g1, Geolocalizacion g2) {
+        if (g1 == null || g2 == null) return false;
+        return g1.getLatitud().equals(g2.getLatitud())
+                && g1.getLongitud().equals(g2.getLongitud());
+    }
+
     //private final GeoMapsClient geoMapsClient;
 
 
@@ -319,4 +327,69 @@ public class RutaService {
 
         return depositoRepository.save(deposito);
     }
+
+    // -------- RUTAS ALTERNATIVAS (ORIGEN-DESTINO + VÍA DEPÓSITOS) --------
+    public List<RutaAlternativaDTO> calcularRutasAlternativas(
+            Integer origenGeoId,
+            Integer destinoGeoId
+    ) {
+        Geolocalizacion origen = geolocalizacionRepository.findById(origenGeoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe geolocalización origen con id " + origenGeoId
+                ));
+
+        Geolocalizacion destino = geolocalizacionRepository.findById(destinoGeoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No existe geolocalización destino con id " + destinoGeoId
+                ));
+
+        List<RutaAlternativaDTO> alternativas = new java.util.ArrayList<>();
+
+        // 1) Ruta directa Origen -> Destino
+        DistanciaDTO distDirecta = calcularDistanciaEntre(origen, destino);
+
+        RutaAlternativaDTO rutaDirecta = new RutaAlternativaDTO();
+        rutaDirecta.setDescripcion("Directa origen-destino");
+        rutaDirecta.setKilometrosTotales(distDirecta.getKilometros());
+        rutaDirecta.setDuracionTotalMinutos(distDirecta.getDuracionMinutos());
+        rutaDirecta.setCantidadTramos(1);
+        rutaDirecta.setCantidadDepositosIntermedios(0);
+
+        alternativas.add(rutaDirecta);
+
+        // 2) Rutas vía cada depósito: Origen -> Depósito -> Destino
+        List<Deposito> depositos = depositoRepository.findAll();
+
+        for (Deposito deposito : depositos) {
+            Geolocalizacion geoDep = deposito.getGeolocalizacion();
+            if (geoDep == null) {
+                // Si el depósito no tiene geo cargada, lo ignoramos
+                continue;
+            }
+
+            // Evitar rutas absurdas (ej: depósito con misma geo que origen o destino)
+            if (mismaGeo(origen, geoDep) || mismaGeo(destino, geoDep)) {
+                continue;
+            }
+
+            DistanciaDTO distOrigenDep = calcularDistanciaEntre(origen, geoDep);
+            DistanciaDTO distDepDestino = calcularDistanciaEntre(geoDep, destino);
+
+            RutaAlternativaDTO rutaViaDeposito = new RutaAlternativaDTO();
+            rutaViaDeposito.setDescripcion("Vía depósito " + deposito.getNombre());
+            rutaViaDeposito.setKilometrosTotales(
+                    distOrigenDep.getKilometros() + distDepDestino.getKilometros()
+            );
+            rutaViaDeposito.setDuracionTotalMinutos(
+                    distOrigenDep.getDuracionMinutos() + distDepDestino.getDuracionMinutos()
+            );
+            rutaViaDeposito.setCantidadTramos(2);
+            rutaViaDeposito.setCantidadDepositosIntermedios(1);
+
+            alternativas.add(rutaViaDeposito);
+        }
+
+        return alternativas;
+    }
+
 }
